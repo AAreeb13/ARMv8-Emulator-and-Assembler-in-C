@@ -1,8 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <stdbool.h>
+#include <string.h>
+// registers: X00 -> X30
+#define NUM_REGS 31
 #define WORD_SIZE 32
 #define MEMORY_SIZE 2097152
+
+struct Reg {
+  char name[4];
+  int value; // stands for Xn -> in binary
+};
+
+// array of general registers
+struct Reg genRegisters[NUM_REGS];
+
+void initialiseGeneralReg() {
+  for (int i = 0; i < NUM_REGS; i++) {
+    sprintf(genRegisters[i].name, "X%02d", i);
+    genRegisters[i].value = 0;
+  }
+}
+
+// create PC structure
+struct Reg PC = {"PC", 0};
+
+// create PState structure
+struct PState {
+  bool N; // last result (lr) was -ive
+  bool Z; // lr was 0
+  bool C; // lr caused a bit to be carried out
+  bool F; // lr caused overflow
+};
+
+struct PState pState = {false, true, false, false};
 
 
 unsigned char getBit(unsigned int, int);
