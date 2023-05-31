@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-// registers: X00 -> X30
-#define NUM_REGS 31
+#include <math.h>
+
 #define WORD_SIZE 32
 #define MEMORY_SIZE 2097152
 
+#define NUM_REGS 31
+// registers: X00 -> X30
 struct Reg {
   char name[4];
   int value; // stands for Xn -> in binary
@@ -35,10 +37,20 @@ struct PState {
 
 struct PState pState = {false, true, false, false};
 
-
+//bit-accessible functions
 unsigned char getBit(unsigned int, int);
 void printByte(unsigned char);
+unsigned int getSubWord(int,int,unsigned int);
+int power(int,int);
 
+//Single Data Transfer functions
+void singleDataTransfer(unsigned int);
+void unsignedImmediateOffset(unsigned int, int);
+void preIndexed(unsigned int, int);
+void registerOffset(unsigned int, int);
+void loadLiteral(unsigned int, int);
+
+//main memory
 unsigned char *memory;
 
 int main(int argc, char **argv) {
@@ -95,9 +107,17 @@ int main(int argc, char **argv) {
   // Print byte in hex
   // for (long i = 0; i < fileSize; i++) {
   //    printf("%08x ", memory[i]);
+  printf("%d\n", getSubWord(4,7, 185));
 
   free(memory);
   return 0;
+}
+//accesses subsection of instruction between indexes start to end, inclusively.
+//PRE: end>=start
+unsigned int getSubWord(int start, int end, unsigned int word){
+  int width = end - start + 1;
+  unsigned int subword = (word >> start) & ((int) (power(2,width) - 1));
+  return subword;
 }
 
 // @param i - ensure it's between 0 and 31 inclusive.
@@ -112,4 +132,55 @@ void printByte(unsigned char byte) {
     unsigned char bit = (byte & mask) ? 1 : 0;
     printf("%d", bit);
   }
+}
+
+void singleDataTransfer(unsigned int word){
+  //size of the load
+  unsigned char sf = getBit(word,30);
+  if (sf==1){
+    //access 64bit target register
+  }else{
+    //access 32bit target register
+  }
+  // l = 1 if load operation else store.
+  char l = getBit(word,22);
+
+  
+  char u = getBit(word,24);
+  
+  //Unsigned Immediate Offset
+  if (u==1){
+    unsignedImmediateOffset(word,l);
+  }
+
+}
+
+void unsignedImmediateOffset(unsigned int word,int l){
+    unsigned char rt_index= word & 15;
+
+}
+void preIndexed(unsigned int word,int l){
+
+}
+void postIndexed(unsigned int word, int l){
+
+}
+void registerOffset(unsigned int word,int l){
+
+}
+void loadLiteral(unsigned int word,int l){
+
+}
+
+
+
+int power( int base, int exponent) {
+    if (exponent == 0) {
+        return 1;
+    } else if (exponent % 2 == 0) {
+        int temp = power(base, exponent / 2);
+        return temp * temp;
+    } else {
+        return base * power(base, exponent - 1);
+    }
 }
