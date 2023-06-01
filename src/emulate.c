@@ -57,15 +57,71 @@ struct PState {
   bool F; // lr caused overflow
 };
 
-struct PState pState = {false, true, false, false};
+struct PState pState = {false, false, false, false};
 
 //main memory
 unsigned char *memory;
 
+// outputs state of CPU into given output file
+int cpuState(char *output_file) {
+
+    FILE *out = fopen(output_file, "w");
+    if (out == NULL) {
+        fprintf(stderr, "Can’t create output.out\n");
+        exit(1);
+    }
+
+    // REGISTERS
+    fputs("Registers:", out);
+    putc('\n', out);
+
+    // general
+    for (int i = 0; i < NUM_REGS; i++) {
+        char temp[27];
+        sprintf(temp, "%.3s    = %016x\n", genRegisters[i].name,
+                genRegisters[i].value);
+        fputs(temp, out);
+    }
+
+    // special registers - PC & PSTATE
+    char temp[27];
+    sprintf(temp, "%.2s     = %016x\n", PC.name, PC.value);
+    fputs(temp, out);
+
+    sprintf(temp, "PSTATE : %.1s%.1s%.1s%.1s\n", pState.N ? "N" : "-",
+            pState.Z ? "Z" : "-", pState.C ? "C" : "-", pState.F ? "F" : "-");
+    fputs(temp, out);
+
+    // Non-zero memory
+    fputs("Non-zero memory:\n", out);
+    for (int i = 0; i < MEMORY_SIZE; i += 4) {
+        unsigned int word = (memory[i + 3] << 24) + (memory[i + 2] << 16) +
+                            (memory[i + 1] << 8) + memory[i];
+        char temp[23];
+        sprintf(temp, "0x%08X : %08x\n", i, word);
+        if (word != 0) { // if non zero
+            fputs(temp, out);
+        }
+        if (word == 0x8a000000) { // reached the end
+            break;
+        }
+    }
+
+    // error checking
+    if (ferror(out)) {
+        fprintf(stderr, "Error occurred writing to output.txt\n");
+        exit(1);
+    }
+    fclose(out);
+
+    return 0;
+}
+
+
 int main(int argc, char **argv) {
   FILE *file;
   // Make sure that there is a second parameter(binary file)
-  if (argc != 2) {
+  if (argc != 3) {
     return EXIT_FAILURE;
   }
 
@@ -99,7 +155,8 @@ int main(int argc, char **argv) {
   // Close file
   fclose(file);
 
-
+  initialiseGeneralReg();
+  cpuState(argv[2]);
 
   // no. words
   // int numWords = fileSize / sizeof(unsigned int);
