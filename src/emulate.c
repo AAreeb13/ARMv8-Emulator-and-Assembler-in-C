@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 
 #define WORD_SIZE 32
 #define MEMORY_SIZE 2097152
@@ -11,18 +12,24 @@
 // registers: X00 -> X30
 
 //bit-accessible functions
-unsigned char getBit(unsigned int, int);
+uint8_t getBit(unsigned int, int);
 void printByte(unsigned char);
 unsigned int getSubWord(int,int,unsigned int);
 int power(int,int);
 
 // Data Processing (Immediate) functions           NEED TO UPDATE FLAGS!!!
 void dataProcessImmediate(unsigned int);
+
 void arithmetic(unsigned int, bool);
 void add(unsigned int, unsigned int, unsigned int);
 void addc(unsigned int, unsigned int, unsigned int);
 void sub(unsigned int, unsigned int, unsigned int);
 void subc(unsigned int, unsigned int, unsigned int);
+
+void wideMove(unsigned int, bool);
+void movn(uint64_t, uint8_t);
+void movz(uint64_t, uint8_t);
+void movk(uint64_t, uint8_t, uint8_t, bool);
 
 //Single Data Transfer functions
 void singleDataTransfer(unsigned int);
@@ -33,7 +40,7 @@ void loadLiteral(unsigned int, int);
 
 struct Reg {
   char name[4];
-  int value; // stands for Xn -> in binary
+  int64_t value; // stands for Xn -> in binary
 };
 
 // array of general registers
@@ -141,7 +148,7 @@ unsigned int getSubWord(int start, int end, unsigned int word){
 }
 
 // @param i - ensure it's between 0 and 31 inclusive.
-unsigned char getBit(unsigned int word, int i) {
+uint8_t getBit(unsigned int word, int i) {
   return (word >> i) & 1;
 }
 
@@ -156,14 +163,19 @@ void printByte(unsigned char byte) {
 
 void dataProcessImmediate(unsigned int word) {
   unsigned char opi = getSubWord(23, 25, word);
+  unsigned char sf = getBit(word, 31);
   if (opi == 2) {
-    unsigned char sf = getBit(word, 31);
     if (sf == 1) {
       arithmetic(word, 1);
     } else {
       arithmetic(word, 0);
     }
   } else if (opi == 5) {
+    if (sf == 1) {
+      wideMove(word, 1);
+    } else {
+      wideMove(word, 0);
+    }
   }
 }
 
@@ -208,6 +220,44 @@ void sub(unsigned int rn, unsigned int Op_2, unsigned int rd) {
 void subc(unsigned int rn, unsigned int Op_2, unsigned int rd) {
   genRegisters[rd].value = genRegisters[rn].value - Op_2;
   // UPDATE FLAGS!!!
+}
+
+void wideMove(unsigned int word, bool Xn) {
+  uint8_t hw = getSubWord(21, 21, word);
+  uint64_t Op = getSubWord(5, 20, word) << (hw * 16);
+  uint8_t opc = getSubWord(29, 30, word);
+  uint8_t rd = getSubWord(0, 4, word);
+  switch (opc) {
+    case 0:
+      movn(Op, rd);
+      break;
+    case 2:
+      movz(Op, rd);
+      break;
+    case 3:
+      movk(Op, rd, hw, Xn);
+      break;
+  }
+}
+
+void movn(uint64_t Op, uint8_t rd) {
+  genRegisters[rd].value = ~Op;
+}
+
+void movz(uint64_t Op, uint8_t rd) {
+  genRegisters[rd].value = Op;
+}
+
+void movk(uint64_t Op, uint8_t rd, uint8_t hw, bool Xn) {
+  int64_t val = genRegisters[rd].value;
+  int64_t lower = getSubWord(0, (hw * 16) - 1, val);
+  int64_t upper;
+  if (Xn == 1) {
+    upper = getSubWord((hw + 1) * 16, 63, val) << ((hw + 1) * 16);
+  } else {
+    upper = 0;
+  }
+  genRegisters[rd].value = upper + val + lower;
 }
 
 void singleDataTransfer(unsigned int word){
