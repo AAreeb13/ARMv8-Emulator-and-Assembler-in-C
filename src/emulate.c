@@ -251,13 +251,13 @@ void movz(uint64_t Op, uint8_t rd) {
 void movk(uint64_t Op, uint8_t rd, uint8_t hw, bool Xn) {
   int64_t val = genRegisters[rd].value;
   int64_t lower = getSubWord(0, (hw * 16) - 1, val);
-  int64_t upper;
-  if (Xn == 1) {
-    upper = getSubWord((hw + 1) * 16, 63, val) << ((hw + 1) * 16);
-  } else {
-    upper = 0;
+  int64_t upper = getSubWord((hw + 1) * 16, 63, val) << ((hw + 1) * 16);
+  int64_t result = lower + Op + upper;
+  if (!Xn) {
+    result = result << 32;
+    result = result >> 32;
   }
-  genRegisters[rd].value = upper + val + lower;
+  genRegisters[rd].value = result;
 }
 
 void singleDataTransfer(unsigned int word){
