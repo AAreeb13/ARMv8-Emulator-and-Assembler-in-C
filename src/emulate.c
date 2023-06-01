@@ -17,6 +17,35 @@ void printByte(unsigned char);
 unsigned int getSubWord(int,int,unsigned int);
 int power(int,int);
 
+struct Reg {
+    char name[4];
+    int64_t value; // stands for Xn -> in binary
+};
+
+// array of general registers
+struct Reg genRegisters[NUM_REGS];
+
+void initialiseGeneralReg() {
+    for (int i = 0; i < NUM_REGS; i++) {
+        sprintf(genRegisters[i].name, "X%02d", i);
+        genRegisters[i].value = 0;
+    }
+}
+
+// create PC structure
+struct Reg PC = {"PC", 0};
+
+// create PState structure
+struct PState {
+    bool N; // last result (lr) was -ive
+    bool Z; // lr was 0
+    bool C; // lr caused a bit to be carried out
+    bool F; // lr caused overflow
+};
+
+struct PState pState = {false, true, false, false};
+
+
 // Data Processing (Immediate) functions           NEED TO UPDATE FLAGS!!!
 void dataProcessImmediate(unsigned int);
 
@@ -38,33 +67,28 @@ void preIndexed(unsigned int, int);
 void registerOffset(unsigned int, int);
 void loadLiteral(unsigned int, int);
 
-struct Reg {
-  char name[4];
-  int64_t value; // stands for Xn -> in binary
-};
+//Branch Instructions functions
+void branchInstructions(unsigned int);
+void unconditionalBranches(unsigned int);
+void registerBranches(unsigned int);
+void conditionalBranches(unsigned int simm19, unsigned int cond) {
+    if (cond == 0000 && pState.Z = 1) { // EQ
 
-// array of general registers
-struct Reg genRegisters[NUM_REGS];
+    } else if (cond == 0001 && pState.Z == 1) { // NE
 
-void initialiseGeneralReg() {
-  for (int i = 0; i < NUM_REGS; i++) {
-    sprintf(genRegisters[i].name, "X%02d", i);
-    genRegisters[i].value = 0;
-  }
+    } else if (cond == 0000 && pState.Z == 0) { // GE
+
+    } else if (cond == 1010 && pState.N == 1) { // LT
+
+    } else if (cond == 1011 && pState.N != 1) { // GT
+
+    } else if (cond == 1101 && !(pState.Z == 0 && pState.N == pState.V)) { // LE
+
+    } else if (cond == 1110) { // AL
+
+    }
 }
 
-// create PC structure
-struct Reg PC = {"PC", 0};
-
-// create PState structure
-struct PState {
-  bool N; // last result (lr) was -ive
-  bool Z; // lr was 0
-  bool C; // lr caused a bit to be carried out
-  bool F; // lr caused overflow
-};
-
-struct PState pState = {false, true, false, false};
 
 //main memory
 unsigned char *memory;
