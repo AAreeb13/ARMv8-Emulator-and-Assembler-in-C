@@ -38,12 +38,6 @@ void preIndexed(unsigned int, int);
 void registerOffset(unsigned int, int);
 void loadLiteral(unsigned int, int);
 
-int bitwiseSubtraction(int a, int b) {
-  int complementB = ~b;  // Get the bitwise complement of b
-  int result = a ^ complementB;  // Perform bitwise XOR between a and complementB
-  return result;
-}
-
 struct Reg {
   char name[4];
   int64_t value; // stands for Xn -> in binary
@@ -108,10 +102,6 @@ int main(int argc, char **argv) {
     fclose(file);
     return EXIT_FAILURE;
   }
-  int a = 10;
-  int b = 5;
-  int result = bitwiseSubtraction(a, b);
-  printf("Result: %d\n", result);
 
   // Close file
   fclose(file);
