@@ -17,6 +17,8 @@ void printByte(unsigned char);
 unsigned int getSubWord(int,int,unsigned int);
 int power(int,int);
 
+int PCOffset(signed int offset);
+
 struct Reg {
     char name[4];
     int64_t value; // stands for Xn -> in binary
@@ -69,9 +71,13 @@ void loadLiteral(unsigned int, int);
 
 //Branch Instructions functions
 void branchInstructions(unsigned int);
-void unconditionalBranches(unsigned int);
-void registerBranches(unsigned int);
-void conditionalBranches(unsigned int simm19, unsigned int cond) {
+void unconditionalBranches(unsigned int) {
+
+}
+void registerBranches(signed int) {
+
+}
+void conditionalBranches(signed int simm19, unsigned int cond) {
     if (cond == 0000 && pState.Z = 1) { // EQ
 
     } else if (cond == 0001 && pState.Z == 1) { // NE
