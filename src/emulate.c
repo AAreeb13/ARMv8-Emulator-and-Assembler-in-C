@@ -27,7 +27,7 @@ void sub(unsigned int, unsigned int, unsigned int);
 void subc(unsigned int, unsigned int, unsigned int);
 
 void wideMove(unsigned int, bool);
-void movn(uint64_t, uint8_t);
+void movn(uint64_t, uint8_t, bool);
 void movz(uint64_t, uint8_t);
 void movk(uint64_t, uint8_t, uint8_t, bool);
 
@@ -37,6 +37,12 @@ void unsignedImmediateOffset(unsigned int, int);
 void preIndexed(unsigned int, int);
 void registerOffset(unsigned int, int);
 void loadLiteral(unsigned int, int);
+
+int bitwiseSubtraction(int a, int b) {
+  int complementB = ~b;  // Get the bitwise complement of b
+  int result = a ^ complementB;  // Perform bitwise XOR between a and complementB
+  return result;
+}
 
 struct Reg {
   char name[4];
@@ -102,6 +108,10 @@ int main(int argc, char **argv) {
     fclose(file);
     return EXIT_FAILURE;
   }
+  int a = 10;
+  int b = 5;
+  int result = bitwiseSubtraction(a, b);
+  printf("Result: %d\n", result);
 
   // Close file
   fclose(file);
@@ -123,7 +133,6 @@ int main(int argc, char **argv) {
   // Print byte in hex
   // for (long i = 0; i < fileSize; i++) {
   //    printf("%08x ", memory[i]);
-
   free(memory);
   return 0;
 }
@@ -240,8 +249,13 @@ void wideMove(unsigned int word, bool Xn) {
   }
 }
 
-void movn(uint64_t Op, uint8_t rd) {
-  genRegisters[rd].value = ~Op;
+void movn(uint64_t Op, uint8_t rd, bool Xn) {
+  uint64_t result = ~Op;
+  if (!Xn) {
+    result = result << 32;
+    result = result >> 32;
+  }
+  genRegisters[rd].value = result;
 }
 
 void movz(uint64_t Op, uint8_t rd) {
