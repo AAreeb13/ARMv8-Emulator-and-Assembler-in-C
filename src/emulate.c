@@ -17,7 +17,7 @@ void printByte(unsigned char);
 unsigned int getSubWord(int,int,unsigned int);
 int power(int,int);
 
-int PCOffset(signed int offset);
+int PCOffset(signed int);
 
 struct Reg {
     char name[4];
@@ -71,29 +71,9 @@ void loadLiteral(unsigned int, int);
 
 //Branch Instructions functions
 void branchInstructions(unsigned int);
-void unconditionalBranches(unsigned int) {
-
-}
-void registerBranches(signed int) {
-
-}
-void conditionalBranches(signed int simm19, unsigned int cond) {
-    if (cond == 0000 && pState.Z = 1) { // EQ
-
-    } else if (cond == 0001 && pState.Z == 1) { // NE
-
-    } else if (cond == 0000 && pState.Z == 0) { // GE
-
-    } else if (cond == 1010 && pState.N == 1) { // LT
-
-    } else if (cond == 1011 && pState.N != 1) { // GT
-
-    } else if (cond == 1101 && !(pState.Z == 0 && pState.N == pState.V)) { // LE
-
-    } else if (cond == 1110) { // AL
-
-    }
-}
+void unconditionalOffset(signed int);
+void unconditionalRegister(unsigned int);
+void conditionalBranches(signed int, unsigned int);
 
 
 //main memory
@@ -168,6 +148,11 @@ int power( int base, int exponent) {
     return base * power(base, exponent - 1);
   }
 }
+
+int PCOffset(signed int offset) {
+    PC.value += offset;
+}
+
 
 //accesses subsection of instruction between indexes start to end, inclusively.
 //PRE: end>=start
@@ -326,4 +311,37 @@ void registerOffset(unsigned int word,int l){
 }
 void loadLiteral(unsigned int word,int l){
 
+}
+
+//Branch Instructions functions
+void branchInstructions(unsigned int);
+
+// signed offset
+void unconditionalOffset(signed int simm26) {
+    PCOffset(simm26 / 4);
+}
+
+// addresse stored in register
+void unconditionalRegister(unsigned int xn) {
+    if (xn != 11111) {
+        PC.value = genRegisters[xn].value;
+    }
+}
+void conditionalBranches(signed int simm19, unsigned int cond) {
+    signed int offset = simm19 / 4;
+    if (cond == 0000 && pState.Z = 1) { // EQ
+
+    } else if (cond == 0001 && pState.Z == 1) { // NE
+
+    } else if (cond == 0000 && pState.Z == 0) { // GE
+
+    } else if (cond == 1010 && pState.N == 1) { // LT
+
+    } else if (cond == 1011 && pState.N != 1) { // GT
+
+    } else if (cond == 1101 && !(pState.Z == 0 && pState.N == pState.V)) { // LE
+
+    } else if (cond == 1110) { // AL
+
+    }
 }
