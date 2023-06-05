@@ -17,6 +17,7 @@ void printByte(unsigned char);
 unsigned int getSubWord(int,int,unsigned int);
 int power(int,int);
 
+int signExtend(signed int, int);
 int PCOffset(signed int);
 
 struct Reg {
@@ -148,6 +149,12 @@ int power( int base, int exponent) {
     return base * power(base, exponent - 1);
   }
 }
+
+// extends N-bit number to 64 bits
+int signExtend(signed int simmN, int N) {
+
+}
+
 
 int PCOffset(signed int offset) {
     PC.value += offset;
@@ -330,18 +337,18 @@ void unconditionalRegister(unsigned int xn) {
 void conditionalBranches(signed int simm19, unsigned int cond) {
     signed int offset = simm19 / 4;
     if (cond == 0000 && pState.Z = 1) { // EQ
-
+        PCOffset(signExtend(offset, 19));
     } else if (cond == 0001 && pState.Z == 1) { // NE
-
+        PCOffset(signExtend(offset, 19));
     } else if (cond == 0000 && pState.Z == 0) { // GE
-
+        PCOffset(signExtend(offset, 19));
     } else if (cond == 1010 && pState.N == 1) { // LT
-
+        PCOffset(signExtend(offset, 19));
     } else if (cond == 1011 && pState.N != 1) { // GT
-
+        PCOffset(signExtend(offset, 19));
     } else if (cond == 1101 && !(pState.Z == 0 && pState.N == pState.V)) { // LE
-
+        PCOffset(signExtend(offset, 19));
     } else if (cond == 1110) { // AL
-
+        PCOffset(signExtend(offset, 19));
     }
 }
