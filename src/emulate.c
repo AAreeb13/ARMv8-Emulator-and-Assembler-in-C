@@ -64,6 +64,9 @@ struct PState {
   bool F; // lr caused overflow
 };
 
+// create zero register
+const struct Reg ZR = {"ZR", 0};
+
 struct PState pState = {false, true, false, false};
 
 //main memory
