@@ -17,8 +17,8 @@ void printByte(unsigned char);
 unsigned int getSubWord(int,int,unsigned int);
 int power(int,int);
 
-int signExtend(signed int, int);
-int PCOffset(signed int);
+int64_t signExtend(int32_t, int);
+void PCOffset(signed int);
 
 struct Reg {
     char name[4];
@@ -151,12 +151,22 @@ int power( int base, int exponent) {
 }
 
 // extends N-bit number to 64 bits
-int signExtend(signed int simmN, int N) {
-
+int64_t signExtend(int32_t simmN, int N) {
+    int64_t result;
+    if (simmN & (1 << (N - 1))) {
+        // If the sign bit is set (negative number)
+        // Perform sign extension with 1s
+        result = (int64_t)simmN | (0xFFFFFFFFFFFFFFFFULL << N);
+    } else {
+        // If the sign bit is not set (positive number)
+        // Perform sign extension with 0s
+        result = (int64_t)simmN & ((1ULL << N) - 1);
+    }
+    return result;
 }
 
 
-int PCOffset(signed int offset) {
+void PCOffset(signed int offset) {
     PC.value += offset;
 }
 
@@ -321,14 +331,23 @@ void loadLiteral(unsigned int word,int l){
 }
 
 //Branch Instructions functions
-void branchInstructions(unsigned int);
+void branchInstructions(unsigned int word) {
+    unsigned int test = getSubWord(29, 31, word);
+    if (test == 0b000) {
+        unconditionalOffset(getSubWord(0, 25, word))
+    } else if (test == 0b011) {
+        unconditionalRegister(getSubWord(5, 9, word));
+    } else if (test == 0b010) {
+        conditionalBranches(getSubWord(5, 23, word), getSubWord(0, 3));
+    }
+}
 
 // signed offset
 void unconditionalOffset(signed int simm26) {
     PCOffset(simm26 / 4);
 }
 
-// addresse stored in register
+// address stored in register
 void unconditionalRegister(unsigned int xn) {
     if (xn != 11111) {
         PC.value = genRegisters[xn].value;
