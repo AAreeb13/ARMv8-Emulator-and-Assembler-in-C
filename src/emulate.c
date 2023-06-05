@@ -43,14 +43,18 @@ struct Reg {
   int64_t value; // stands for Xn -> in binary
 };
 
-// array of general registers
-struct Reg genRegisters[NUM_REGS];
+// array of general registers + zero register
+struct Reg genRegisters[NUM_REGS + 1];
+
+// create zero register
+const struct Reg ZR = {"ZR", 0};
 
 void initialiseGeneralReg() {
   for (int i = 0; i < NUM_REGS; i++) {
     sprintf(genRegisters[i].name, "X%02d", i);
     genRegisters[i].value = 0;
   }
+  genRegisters[NUM_REGS] = ZR;
 }
 
 // create PC structure
@@ -64,8 +68,6 @@ struct PState {
   bool F; // lr caused overflow
 };
 
-// create zero register
-const struct Reg ZR = {"ZR", 0};
 
 struct PState pState = {false, true, false, false};
 
@@ -231,7 +233,7 @@ void wideMove(unsigned int word, bool Xn) {
   uint8_t rd = getSubWord(0, 4, word);
   switch (opc) {
     case 0:
-      movn(Op, rd);
+      movn(Op, rd, Xn);
       break;
     case 2:
       movz(Op, rd);
