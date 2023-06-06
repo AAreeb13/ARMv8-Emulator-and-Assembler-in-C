@@ -8,8 +8,8 @@
 
 #define WORD_SIZE 32
 #define MEMORY_SIZE (1 << 21) // 2MB
-#define MASK_32 ((1 << 31) - 1)
-#define MASK_64 ((1 << 63) - 1)
+#define MASK_32 ((UINT32_C(1) << 31) - 1)
+#define MASK_64 ((UINT64_C(1) << 63) - 1)
 
 #define NUM_GENREGS 31
 // registers: X00 -> X30
@@ -21,6 +21,7 @@ int64_t ror(int64_t, uint8_t, bool);
 int64_t lsr(int64_t, uint8_t, bool);
 int64_t lsl(int64_t, uint8_t, bool);
 int64_t asr(int64_t, uint8_t, bool);
+//
 
 // Data Processing (Immediate) functions           NEED TO UPDATE FLAGS!!!
 void dataProcessImmediate(uint32_t);
@@ -35,6 +36,7 @@ void wideMove(uint32_t, bool);
 void movn(uint64_t, uint8_t, bool);
 void movz(uint64_t, uint8_t);
 void movk(uint64_t, uint8_t, uint8_t, bool);
+//
 
 // Data Processing (Register) functions            NEED TO TAKE INTO ACC ZR!!!
 void dataProcessRegister(uint32_t);
@@ -52,7 +54,20 @@ int64_t ands(int64_t, uint64_t, bool);
 int64_t bics(int64_t, uint64_t, bool);
 
 void multiply(uint32_t, bool);
+//
 
+//Single Data Transfer functions
+void singleDataTransfer(uint32_t);
+
+uint64_t unsignedImmediateOffset(uint32_t,uint8_t);
+uint64_t preIndexed(uint32_t);
+uint64_t postIndexed(uint32_t);
+uint64_t registerOffset(uint32_t);
+uint64_t loadLiteral(uint32_t);
+
+void load(uint64_t,uint8_t,uint8_t);
+void store(uint64_t,uint8_t,uint8_t);
+//
 
 struct Reg {
   char name[4];
@@ -89,6 +104,7 @@ struct PState pState = {false, true, false, false};
 // main memory
 uint8_t *memory;
 
+///////////////////////////////////////////////////////////////////
 int main(int argc, char **argv) {
   FILE *file;
   // Make sure that there is a second parameter(binary file)
@@ -130,23 +146,23 @@ int main(int argc, char **argv) {
   int numWords = fileSize / sizeof(uint32_t);
 
   // process each word
-
+  uint32_t word;
   for (int i = 0; i < numWords; i++) {
-    uint32_t word = *(uint32_t *)(memory + i * sizeof(uint32_t));
+    word = *(uint32_t *)(memory + i * sizeof(uint32_t));
     if (getSubWord(26, 28, word) == 4) /*0b100x*/ {
       dataProcessImmediate(word);
     } else if (getSubWord(25, 27, word) == 5) /*0bx101*/ {
       dataProcessRegister(word);
     } else if ((getBit(word, 27) == 1) && (getBit(word, 25) == 0)) /*0bx1x0*/ {
-      // Loads and Stores
+      singleDataTransfer(word);
     } else if (getSubWord(26, 28, word) == 5) /*0b101x*/ {
       // Branches
     }
   }
-
   free(memory);
   return 0;
 }
+///////////////////////////////////////////////////////////////////
 
 // @param i - ensure it's between 0 and 31 inclusive.
 uint8_t getBit(uint32_t word, uint8_t i) { return (word >> i) & 1; }
@@ -172,7 +188,7 @@ int64_t ror(int64_t value, uint8_t shiftAmount, bool Xn) {
   shiftAmount %= 64;
   int64_t result = value;
   for (int i = 0; i < shiftAmount; i++) {
-    int64_t firstBit = getBit(result, 0) ? (MASK_64 + 1) : 0;
+    int64_t firstBit = getBit(result, 0) ? UINT64_C(1) << 63 : 0;
     result = ((result >> 1) & MASK_64) + (firstBit);
   }
   return result;
@@ -490,5 +506,95 @@ void multiply(uint32_t word, bool Xn) {
             (genRegisters[rn].value * genRegisters[rm].value)
           : genRegisters[ra].value +
             (genRegisters[rn].value * genRegisters[rm].value);
+  }
+}
+
+///STORING AND LOADING
+void singleDataTransfer(uint32_t word){
+  //size of the load
+  uint8_t sf = getBit(word,30);
+  uint8_t rt_index =  getSubWord(0,4,word); // target register address.
+  uint8_t l = getBit(word,22); // 1 if load, else store.
+  uint64_t address;
+  uint8_t u = getBit(word,24);
+  if (getBit(word,31) == 1) {
+    if(u==1){ //Unsigned Immediate
+      address = unsignedImmediateOffset(word,sf);
+      }
+    else if(getBit(21,word)==0 && getBit(10,word)==1){ //Pre or Post - Indexed
+      uint8_t i = getBit(word,11);
+      address =  (i==1) ? preIndexed(word) : postIndexed(word);
+      }
+    else if(getSubWord(10,15,word)==26 && getBit(word,21)){
+      address = registerOffset(word);
+      }
+    
+  }else if (getBit(word,31)==0) {
+    address = loadLiteral(word);
+    l = 1; // makes sure it will be loaded into memory
+  }
+  
+  //must be within necessary range   
+  if (!(address < (1 << 21) && address >= 0)) {
+    printf("Address is not within range  0 and (2^21 - 1)\n");
+    return;
+  }
+  if (l==0){
+    //LOADING TO REGISTER OR STORING IN MAIN MEMORY
+      store(address,rt_index,sf);
+        }else{
+      load(address,rt_index,sf);
+    }   
+} //Pre U==1
+uint64_t unsignedImmediateOffset(uint32_t word,uint8_t sf){
+  uint8_t xn_index = getSubWord(5,9,word);
+  uint64_t xn = genRegisters[xn_index].value;
+  uint64_t imm12 = (uint64_t) getSubWord(10,12,word);
+  // address = xn.value + offset
+  return imm12 + xn;
+}
+uint64_t preIndexed(uint32_t word){
+  int64_t simm9 = (int64_t) getSubWord(12,20,word);
+  int64_t signedBit = simm9 & (1<<8); // access value at final position
+  simm9 = simm9 - signedBit - signedBit;
+  uint8_t xn_index = getSubWord(5,9,word); //register address
+  genRegisters[xn_index].value += simm9;
+  return genRegisters[xn_index].value;  
+}
+uint64_t postIndexed(uint32_t word){
+  int64_t simm9 = (int64_t) getSubWord(12,20,word);
+  int64_t signedBit = simm9 & (1<<8); 
+  simm9 = simm9 - signedBit - signedBit;
+  int64_t xn = genRegisters[getSubWord(5,9,word)].value;//old register value
+  genRegisters[getSubWord(5,9,word)].value +=  simm9; //new register value
+  return xn;
+}
+uint64_t registerOffset(uint32_t word){
+  uint8_t xn_index = getSubWord(5,9,word);
+  uint64_t xn = genRegisters[xn_index].value;
+  uint8_t xm_index = getSubWord(16,20,word);
+  uint64_t xm = genRegisters[xm_index].value;
+  return xn + xm;
+}
+uint64_t loadLiteral(uint32_t word){
+  int64_t simm19 = (int64_t) getSubWord(5,23,word);
+  int64_t signedBit = simm19 & (1<<18);
+  simm19 = simm19-signedBit-signedBit;
+  return (uint64_t) (simm19*4 + PC.value);
+}
+//Pre: sf = 1 or 0 , address is non-negative and less than 2^21
+void load(uint64_t address,uint8_t rt_index,uint8_t sf){
+  int n = (sf==1) ? 8:4; //decides whether registers are 64bit version or 32bit version 
+  uint64_t loadedValue = 0;
+  for (int i=0;i<n;i++){
+    loadedValue += (memory[address+i]<<i*8);
+  }
+  genRegisters[rt_index].value = loadedValue;
+}
+//Pre sf = 1 or 0 , address is non-negative and less than 2^21
+void store(uint64_t address,uint8_t rt_index,uint8_t sf){
+  int n = (sf==1) ? 8:4;//decides whether registers are 64bit version or 32bit version 
+  for (int i = 0; i<n;i++){
+    memory[address+i] = (uint8_t) getSubWord(i*8,i*8+7,genRegisters[rt_index].value);//
   }
 }
