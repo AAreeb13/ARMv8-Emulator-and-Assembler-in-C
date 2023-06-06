@@ -63,6 +63,7 @@ struct Reg {
 struct Reg genRegisters[NUM_GENREGS + 1];
 
 // zero register
+// create zero register
 const struct Reg ZR = {"ZR", 0};
 
 void initialiseGeneralReg() {
@@ -83,6 +84,7 @@ struct PState {
   bool C; // lr caused a bit to be carried out
   bool V; // lr caused overflow
 };
+
 
 struct PState pState = {false, true, false, false};
 
