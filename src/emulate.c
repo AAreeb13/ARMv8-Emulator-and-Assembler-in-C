@@ -8,8 +8,8 @@
 
 #define WORD_SIZE 32
 #define MEMORY_SIZE (1 << 21) // 2MB
-#define MASK_32 (1 << 31)
-#define MASK_64 (1 << 63)
+#define MASK_32 ((1 << 31) - 1)
+#define MASK_64 ((1 << 63) - 1)
 
 #define NUM_GENREGS 31
 // registers: X00 -> X30
@@ -63,7 +63,6 @@ struct Reg {
 struct Reg genRegisters[NUM_GENREGS + 1];
 
 // zero register
-// create zero register
 const struct Reg ZR = {"ZR", 0};
 
 void initialiseGeneralReg() {
@@ -84,7 +83,6 @@ struct PState {
   bool C; // lr caused a bit to be carried out
   bool V; // lr caused overflow
 };
-
 
 struct PState pState = {false, true, false, false};
 
@@ -260,21 +258,21 @@ void arithmetic(uint32_t word, bool Xn) {
 
 void add(uint8_t rn, uint32_t Op_2, uint8_t rd, bool Xn) {
   genRegisters[rd].value = Xn ? genRegisters[rn].value + Op_2
-      : ((int32_t) genRegisters[rn].value) + Op_2;
+                              : ((int32_t) genRegisters[rn].value) + Op_2;
 }
 void addc(uint8_t rn, uint32_t Op_2, uint8_t rd, bool Xn) {
   genRegisters[rd].value = Xn ? genRegisters[rn].value + Op_2
-      : ((int32_t) genRegisters[rn].value) + Op_2;
+                              : ((int32_t) genRegisters[rn].value) + Op_2;
   // UPDATE FLAGS!!!
 }
 void sub(uint8_t rn, uint32_t Op_2, uint8_t rd, bool Xn) {
   genRegisters[rd].value = Xn ? genRegisters[rn].value - Op_2
-      : ((int32_t) genRegisters[rn].value) - Op_2;
+                              : ((int32_t) genRegisters[rn].value) - Op_2;
 }
 
 void subc(uint8_t rn, uint32_t Op_2, uint8_t rd, bool Xn) {
   genRegisters[rd].value = Xn ? genRegisters[rn].value - Op_2
-      : ((int32_t) genRegisters[rn].value) - Op_2;
+                              : ((int32_t) genRegisters[rn].value) - Op_2;
   // UPDATE FLAGS!!!
 }
 
