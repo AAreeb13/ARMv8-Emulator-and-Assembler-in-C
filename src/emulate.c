@@ -4,22 +4,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #define WORD_SIZE 32
 #define MEMORY_SIZE (1 << 21) // 2MB
-// 2^31 - 1
-#define MASK_32 2147483647
-// 2^63 - 1
-#define MASK_64 9223372036854775807
+#define MASK_32 (1 << 31)
+#define MASK_64 (1 << 63)
 
 #define NUM_GENREGS 31
 // registers: X00 -> X30
 
 // misc
 uint8_t getBit(uint32_t, uint8_t);
-void printByte(unsigned char);
 uint32_t getSubWord(uint8_t, uint8_t, uint32_t);
-int power(int, int);
 int64_t ror(int64_t, uint8_t, bool);
 int64_t lsr(int64_t, uint8_t, bool);
 int64_t lsl(int64_t, uint8_t, bool);
@@ -55,6 +52,7 @@ int64_t ands(int64_t, uint64_t, bool);
 int64_t bics(int64_t, uint64_t, bool);
 
 void multiply(uint32_t, bool);
+
 
 struct Reg {
   char name[4];
@@ -94,7 +92,7 @@ uint8_t *memory;
 int main(int argc, char **argv) {
   FILE *file;
   // Make sure that there is a second parameter(binary file)
-  if (argc != 2) {
+  if (argc != 3) {
     return EXIT_FAILURE;
   }
 
@@ -145,10 +143,7 @@ int main(int argc, char **argv) {
       // Branches
     }
   }
-  // // Print byte in hex
-  // for (long i = 0; i < fileSize; i++) {
-  //    printf("%08x ", memory[i]);
-  // }
+
   free(memory);
   return 0;
 }
@@ -156,32 +151,12 @@ int main(int argc, char **argv) {
 // @param i - ensure it's between 0 and 31 inclusive.
 uint8_t getBit(uint32_t word, uint8_t i) { return (word >> i) & 1; }
 
-// @param byte - for passing in memory[i].
-void printByte(unsigned char byte) {
-  for (int j = 7; j >= 0; j--) {
-    uint8_t mask = 1 << j;
-    uint8_t bit = (byte & mask) ? 1 : 0;
-    printf("%d", bit);
-  }
-}
-
 // accesses subsection of instruction between indexes start to end, inclusively.
 // PRE: end>=start
 uint32_t getSubWord(uint8_t start, uint8_t end, uint32_t word) {
   int width = end - start + 1;
-  unsigned int subword = (word >> start) & (power(2, width) - 1);
+  unsigned int subword = (word >> start) & ((1 << width) - 1);
   return subword;
-}
-
-int power(int base, int exponent) {
-  if (exponent == 0) {
-    return 1;
-  } else if (exponent % 2 == 0) {
-    int temp = power(base, exponent / 2);
-    return temp * temp;
-  } else {
-    return base * power(base, exponent - 1);
-  }
 }
 
 int64_t ror(int64_t value, uint8_t shiftAmount, bool Xn) {
@@ -496,7 +471,7 @@ int64_t bics(int64_t rn, uint64_t Op_2, bool Xn) {
 }
 
 void multiply(uint32_t word, bool Xn) {
-  assert(getSubWord(29, 30, word) == 0);
+//  assert(getSubWord(29, 30, word) == 0);
   uint8_t rd = getSubWord(0, 4, word);
   if (rd == 31) return;
   uint8_t rm = getSubWord(16, 20, word);
