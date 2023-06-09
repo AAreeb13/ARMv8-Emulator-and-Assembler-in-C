@@ -40,7 +40,7 @@ void arithmeticReg(uint32_t word, bool Xn) {
 
   switch (opc) {
     case 0: /*0b00*/
-      addReg(rn, Op_2, rd, Xn);
+      add(rn, Op_2, rd, Xn);
       break;
     case 1: /*0b01*/
       adds(rn, Op_2, rd, Xn);
