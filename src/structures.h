@@ -26,6 +26,19 @@ struct List{
 typedef struct List *List;
 
 
+// Freeing functions
+extern void freeList(List list);
+extern void freeNode(Node node);
+
+// List creation
+extern List createList(Node startNode, Node endNode, uint8_t count);
+extern List createListWithStart(Node startNode);
+extern List createListWithBoth(Node startNode, Node endNode);
+
+// Node creation
+extern Node createNode(uint8_t memoryAddress, const char* type, const char** args, uint8_t num);
+
+
 
 
 
