@@ -17,7 +17,13 @@ struct Node{
 };
 
 
+struct List{
+    int count;
+    Node first;
+    Node last;
+};
 
+typedef struct List *List;
 
 
 
