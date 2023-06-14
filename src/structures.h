@@ -4,16 +4,20 @@
 
 #ifndef ARM_PROJECT_STRUCTURES_H
 #define ARM_PROJECT_STRUCTURES_H
+#include <stdint.h>
+
+typedef struct Node *Node;
 
 struct Node{
-    uint8 memoryAddress;
+    uint8_t memoryAddress;
     char *type;
-    char *args[];
-    uint8 num;
+    char **args;
+    uint8_t num;
     Node next;
 };
 
-typedef Node *Node;
+
+
 
 
 
