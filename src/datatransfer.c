@@ -48,15 +48,21 @@ uint32_t zeroUnsignedOffset() {
 }
 uint32_t unsignedImmediateOffset(char **args){
   uint8_t isX = args[0][0] == 'X';
-  char imm[5];
-  strncpy(imm,args[2],strlen(args[2])-1);
+  char strImm[5];
+  strncpy(strImm,args[2],strlen(args[2])-1);
   uint8_t n = (isX) ? 3 : 2;
-  int imm12;parseLiteral(imm,imm12);
+  uint32_t imm12;parseLiteral(strImm,&imm12);
   imm12 = imm12 >> n;
   return imm12;
 }
 uint32_t preIndexed(char **args){
   uint32_t offset = 0 + 0b11; //added bits 11, 10
+  char strSimm[5];
+  strncpy(strSimm,args[2],strlen(args[2])-2); // provide signed literal in str, e.g "#123" or "#-232"
+  uint32_t simm9; parseLiteral(strSimm,&simm9);
+  simm9 = simm9 & 0b111111111;
+  putBits(&offset, simm9, 2);
+  return offset;
 
 }
 uint32_t postIndexed(char **args){
