@@ -67,6 +67,11 @@ uint32_t preIndexed(char **args){
 }
 uint32_t postIndexed(char **args){
   uint32_t offset = 0 + 0b01; //added bits 11, 10
+  uint32_t simm9;
+  parseLiteral(args[2],&simm9);
+  simm9 = simm9 & 0b111111111;
+  putBits(&offset, simm9, 2);
+  return offset;
 }
 
 
