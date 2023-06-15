@@ -58,11 +58,11 @@ uint32_t arithmeticImm(Node node) {
   uint16_t imm;
   uint8_t rn;
   uint8_t rd;
-  if (strcmp("add", node -> type) == 0) {
+  if (!strcmp("add", node -> type)) {
     opc = 0b00;
-  } else if (strcmp("adds", node -> type) == 0) {
+  } else if (!strcmp("adds", node -> type)) {
     opc = 0b01;
-  } else if (strcmp("sub", node -> type) == 0) {
+  } else if (!strcmp("sub", node -> type)) {
     opc = 0b10;
   } else /*subs*/ {
     opc = 0b11;
