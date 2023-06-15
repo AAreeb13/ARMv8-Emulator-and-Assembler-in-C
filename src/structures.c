@@ -116,7 +116,7 @@ Node addNode(Node currNode, Node addNode, List list) {
 char *printNode(Node node, char *representation) {
     char builder[100];
     strcpy(builder, node->type);
-    for (int i = 0; i < node->count; i++) {
+    for (int i = 0; i < node->num; i++) {
         strcat(builder, (node->args)[i]);
     }
     strcpy(representation, builder);

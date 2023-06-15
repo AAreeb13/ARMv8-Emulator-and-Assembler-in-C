@@ -98,10 +98,10 @@ uint32_t wideMove(Node node) {
 // cmp rn, <op2> = subs rzrm rn, <op2>
 uint32_t compare(Node node) {
     char** newArgs; // NEED TO ADD RZR AT THE FRONT
-    Node copy = createNode(node.memoryAddress,
-                           node.type,
+    Node copy = createNode(node->memoryAddress,
+                           node->type,
                            newArgs,
-                           num + 1);
+                        node->num + 1);
     uint32_t result = arithmeticImm(copy);
     freeNode(copy);
     return result;
@@ -109,17 +109,17 @@ uint32_t compare(Node node) {
 
 // cmp rn, <op2> = subs rzrm rn, <op2>
 // cmn rn, <op2> = adds rzrm rn, <op2>
-uint32_t compare(Node node) {
-    char** newArgs[num+1][5];
-    newArgs[0] = "11111"; // adding RZR at the front
-    for (int i = 0; i < num; i++) {
-        newArgs[i + 1] = node->args[i]
+uint32_t comparepn(Node node) {
+    char** newArgs[node->num+1][5];
+    strcpy(newArgs[0], "11111"); // adding RZR at the front
+    for (int i = 0; i < node->num; i++) {
+        strcpy(newArgs[i + 1], node->args[i]);
     }
 
-    Node copy = createNode(node.memoryAddress,
-                           strcmp(node.type, "cmp") ? "subs" : "adds",
+    Node copy = createNode(node->memoryAddress,
+                           strcmp(node->type, "cmp") ? "subs" : "adds",
                            newArgs,
-                           num + 1);
+                           node->num + 1);
     uint32_t result = arithmeticImm(copy);
     freeNode(copy);
     return result;
@@ -127,17 +127,18 @@ uint32_t compare(Node node) {
 
 // neg(s) rd, <op2> = sub(s) rd, rzr, <op2>
 uint32_t negate(Node node) {
-    char** newArgs[num+1][5];
-    newArgs[0] = node->args[0];
-    newArgs[1] = "11111"; // Adding RZR in the middle
-    if (num == 2) {
-        newArgs[2] = node->args[2];
+    char newArgs[node->num+1][5];
+    strcpy(newArgs[0], node->args[0]);
+    strcpy(newArgs[1], "11111"); // Adding RZR in the middle
+
+    if (node->num == 2) {
+        strcpy(newArgs[2], node->args[2]);
     }
 
-    Node copy = createNode(node.memoryAddress,
-                           strcmp(node.type, "neg") ? "sub" : "subs",
+    Node copy = createNode(node->memoryAddress,
+                           strcmp(node->type, "neg") ? "sub" : "subs",
                            newArgs,
-                           num + 1);
+                           node->num + 1);
     uint32_t result = arithmeticImm(copy);
     freeNode(copy);
     return result;
@@ -146,17 +147,18 @@ uint32_t negate(Node node) {
 
 // tst rn, <op2> = ands rzr, rn, <op2>
 uint32_t testBits(Node node) {
-    char** newArgs[num+1][5];
-    newArgs[0] = "11111"; // adding RZR at the front
-    for (int i = 0; i < num; i++) {
-        newArgs[i + 1] = node->args[i]
+    char newArgs[node->num+1][10];
+    strcpy(newArgs[0], "11111"); // adding RZR at the front
+    for (int i = 0; i < node->num; i++) {
+        strcpy(newArgs[i + 1], node->args[i]);
     }
 
-    Node copy = createNode(node.memoryAddress,
+    Node copy = createNode(node->memoryAddress,
                            "ands",
                            newArgs,
-                           num + 1);
+                           node->num + 1);
     uint32_t result = arithmeticImm(copy);
+
     freeNode(copy);
     return result;
 }
