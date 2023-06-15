@@ -17,8 +17,12 @@ struct Node{
     Node next;
 };
 extern uint32_t singleDataTransfer(Node);
+
 extern uint32_t unsignedImmediateOffset(char **);
 extern uint32_t zeroUnsignedOffset();
+extern uint32_t postIndexed(char **);
+extern uint32_t preIndexed(char **);
+extern uint32_t registerOffset(char **);
 
 
 

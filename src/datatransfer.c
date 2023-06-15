@@ -30,8 +30,10 @@ uint32_t singleDataTransfer(Node instruction) {
     uint32_t isLoad = instruction->type == "ldr";//bit in position 22.
     putBits(&binary, isLoad, 22); totalBitsAdded++;
     putBits(&binary,0,23); totalBitsAdded++;
-    uint32_t *xn = args[1]; xn++; // no longer pointing to ']' but to 'x' or 'w'.
+
+    uint32_t xn;parseReg(args[1], &rt, &xn);
     uint32_t offset;
+
     if (args ==2) {
       offset = zeroUnsignedOffset();
 
@@ -73,7 +75,22 @@ uint32_t postIndexed(char **args){
   putBits(&offset, simm9, 2);
   return offset;
 }
+uint32_t registerOffset(char **args){
+  uint32_t offset;
+  char xm[5];
+  strncpy(xm,args[2],strlen(args[2])-1);
+  xm[strlen(args[2])-1] = '\0';
+  uint8_t *redundantsf;
+  uint8_t xmValue;
+  parseReg(xm,redundantsf, &xmValue);
+  putBits(&offset,xmValue,6);
+  putBits(&offset, 0b100000011010,0);
+  return offset;
+}
+//void loadLiteral(uint32_t binary, char **args){
 
+
+//}
 
 
 
