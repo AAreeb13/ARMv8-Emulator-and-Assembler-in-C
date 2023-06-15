@@ -16,8 +16,9 @@ struct Node{
     char **args;
     Node next;
 };
-uint32_t singleDataTransfer(Node);
-uint32_t zeroUnsignedOffset();
+extern uint32_t singleDataTransfer(Node);
+extern uint32_t unsignedImmediateOffset(char **);
+extern uint32_t zeroUnsignedOffset();
 
 
 
