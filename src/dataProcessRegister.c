@@ -65,3 +65,4 @@ uint32_t arith_or_logic(Node node) {
   composeWord(&result, sf, opc, type, bit24, shift, N, rm, operand, rn, rd);
   return result;
 }
+
