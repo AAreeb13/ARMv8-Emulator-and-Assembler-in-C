@@ -8,7 +8,7 @@
 #define MAX_SYMBOLS 100
 
 
-symbolEntry createEntry(char *label, uint8_t memoryAddress) {
+symbolEntry createEntry(char *label, uint32_t memoryAddress) {
   symbolEntry newEntry = malloc(sizeof(struct symbolEntry));
   if (newEntry == NULL) {
     printf("Malloc failed when allocating newEntry");
@@ -17,24 +17,20 @@ symbolEntry createEntry(char *label, uint8_t memoryAddress) {
 
   strcpy(newEntry->label, label);
   newEntry->memoryAddress = memoryAddress;
+
+  return newEntry;
 }
 
-symbolTable createSymTable(int size, int count, symbolEntry *table) {
+symbolTable createSymTable(int max_size, int count, symbolEntry *table) {
   symbolTable newTable = malloc(sizeof(struct symbolTable));
   if (newTable == NULL) {
     printf("Malloc failed when allocating newTable");
     return NULL;
   }
 
-  newTable->size = size;
+  newTable->max_size = max_size;
   newTable->count = count;
   for (int i = 0; i < count; i++) {
-//    newTable->table[i] = malloc(sizeof(struct symbolEntry));
-//    if (newTable->table[i] == NULL) {
-//      printf("Malloc failed allocating table[%d]", i);
-//      free(newTable);
-//      return NULL;
-//    }
     newTable->table[i] = table[i];
   }
 
@@ -42,16 +38,18 @@ symbolTable createSymTable(int size, int count, symbolEntry *table) {
 }
 
 
-uint8_t addressSearch(symbolTable symtable, char *label) {
+uint32_t getAddress(symbolTable symtable, char *label) {
   for (int i = 0; i < (symtable->count); i++) {
     if (strcmp(symtable->table[i]->label, label) == 0) {
       return symtable->table[i]->memoryAddress;
     }
   }
+  printf("Label not found!");
   return NULL;
 }
 
-Node createNode(uint8_t memoryAddress, const char* type, const char** args, uint8_t num) {
+
+Node createNode(uint32_t memoryAddress, const char* type, const char** args, int num) {
   Node newNode = malloc(sizeof(struct Node));
   if (newNode == NULL) {
     printf("Malloc failed when allocating newNode");
@@ -107,20 +105,19 @@ Node createNode(uint8_t memoryAddress, const char* type, const char** args, uint
 }
 
 
-Node addNode(Node currNode, Node addNode, List list) {
+Node addNodeToNode(Node currNode, Node addNode, List list) {
   currNode->next = addNode;
   list->count ++;
   return currNode;
 }
 
-char *printNode(Node node, char *representation) {
+void printNode(Node node) {
   char builder[100];
   strcpy(builder, node->type);
-  for (int i = 0; i < node->count; i++) {
+  for (int i = 0; i < node->num; i++) {
     strcat(builder, (node->args)[i]);
   }
-  strcpy(representation, builder);
-  return representation;
+  printf("%s\n", builder);
 }
 
 /*
@@ -138,7 +135,7 @@ char *printNode(Node node, char *representation) {
    - startNode and endNode must be valid pointers to Node structures.
    - count must be a positive value.
 */
-List createList(Node startNode, Node endNode, uint8_t count) {
+List createList(Node startNode, Node endNode, int count) {
   List list = malloc(sizeof(struct List));
   if (list == NULL) {
     printf("Malloc failed when allocating list");
@@ -162,6 +159,28 @@ List createListWithBoth(Node startNode, Node endNode) {
 }
 
 
+// Free Functions Below
+
+
+void freeSymbolEntry(symbolEntry symEntry) {
+  free(symEntry);
+}
+
+/*
+ * Frees the memory allocated for a symbol table and its entries.
+ * Parameters:
+   - symTable: A pointer to the symbolTable structure representing the symbol Table to be freed.
+ * Preconditions:
+   - The list must be a valid pointer to a non-empty symbol Table structure.
+*/
+void freeSymbolTable(symbolTable symTable) {
+  for (int i = 0; i < symTable->count; i++) { // Free each of the symbolEntries
+    freeSymbolEntry(symTable->table[i]);
+  }
+  free(symTable);
+}
+
+
 /*
  * Frees the memory allocated for a linked list and its nodes.
  * Parameters:
@@ -175,10 +194,11 @@ void freeList(List list) {
   Node nextNode = list->first;
   for (int i = 0; i < (list->count); i++) {
     nextNode = node->next;
-    free(node);
+    freeNode(node);
   }
   free(list);
 }
+
 
 /*
  * Frees the memory allocated for a single node of the linked list.
@@ -187,8 +207,6 @@ void freeList(List list) {
  * Preconditions:
    - The node must be a valid pointer to a Node structure.
 */
-
-
 void freeNode(Node node) {
   free(node->memoryAddress);
   free(node->type);
@@ -199,6 +217,8 @@ void freeNode(Node node) {
   }
   free(node->num);
 }
+
+
 
 
 
