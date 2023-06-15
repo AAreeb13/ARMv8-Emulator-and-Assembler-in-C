@@ -1,6 +1,14 @@
 #include "dataProcessRegister.h"
 
-// processes registers and operand
+// processes registers for multiply()
+static void parseRegs(Node node, uint8_t *sf, uint8_t *rm, uint8_t *ra, uint8_t *rn, uint8_t *rd) {
+  parseReg(node -> args[0], sf, rd);
+  parseReg(node -> args[1], sf, rn);
+  parseReg(node -> args[2], sf, rm);
+  parseReg(node -> args[3], sf, ra);
+}
+
+// processes registers and operand for arith_or_logic()
 static void parseArgs(Node node, uint8_t *sf, uint8_t *shift, uint8_t *rm, uint8_t *operand, uint8_t *rn, uint8_t *rd) {
   parseReg(node -> args[0], sf, rd);
   parseReg(node -> args[1], sf, rn);
@@ -16,7 +24,7 @@ static void parseArgs(Node node, uint8_t *sf, uint8_t *shift, uint8_t *rm, uint8
   }
 }
 
-// produces the instruction word with given components
+// produces the instruction word with given components for arith_or_logic()
 static void composeWord(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t type, uint8_t bit24, uint8_t shift, uint8_t N,uint8_t rm, uint8_t operand, uint8_t rn, uint8_t rd) {
   putBits(result, sf, 31);
   putBits(result, opc, 29);
@@ -26,6 +34,17 @@ static void composeWord(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t type,
   putBits(result, N, 21);
   putBits(result, rm, 16);
   putBits(result, operand, 10);
+  putBits(result, rn, 5);
+  putBits(result, rd, 0);
+}
+
+// produces the instruction word with given components for multiply()
+static void composeWordMul(uint32_t *result, uint8_t sf, uint16_t section, uint8_t rm, uint8_t x, uint8_t ra, uint8_t rn, uint8_t rd) {
+  putBits(result, sf, 31);
+  putBits(result, section, 21);
+  putBits(result, rm, 16);
+  putBits(result, x, 15);
+  putBits(result, ra, 10);
   putBits(result, rn, 5);
   putBits(result, rd, 0);
 }
@@ -66,3 +85,17 @@ uint32_t arith_or_logic(Node node) {
   return result;
 }
 
+// deals with madd and msub
+uint32_t multiply(Node node) {
+  uint32_t result = 0;
+  uint8_t sf;
+  uint16_t section = 0b0011011000; /* bits 30 to 21 */
+  uint8_t rm;
+  uint8_t x = strcmp("madd", node -> type) ? 1 : 0;
+  uint8_t ra;
+  uint8_t rn;
+  uint8_t rd;
+  parseRegs(node, &sf, &rm, &ra, &rn, &rd);
+  composeWordMul(&result, sf, section, rm, x, ra, rn, rd);
+  return result;
+}
