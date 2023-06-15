@@ -1,7 +1,7 @@
 #include "dataProcessImmediate.h"
 
 // processes registers and operand
-void parseArgsArithmetic(Node node, uint8_t *sf, uint8_t *sh, uint16_t *imm, uint8_t *rn, uint8_t *rd) {
+static void parseArgsArithmetic(Node node, uint8_t *sf, uint8_t *sh, uint16_t *imm, uint8_t *rn, uint8_t *rd) {
   if (node -> num <= 3) {
     *sh = 0;
   } else {
@@ -14,7 +14,7 @@ void parseArgsArithmetic(Node node, uint8_t *sf, uint8_t *sh, uint16_t *imm, uin
   parseLiteral(node -> args[2], imm);
 }
 
-void parseArgsWideMove(Node node, uint8_t *sf, uint8_t *hw, uint16_t *imm, uint8_t *rd) {
+static void parseArgsWideMove(Node node, uint8_t *sf, uint8_t *hw, uint16_t *imm, uint8_t *rd) {
   if (node -> num <= 2) {
     *hw = 0;
   } else {
@@ -27,7 +27,7 @@ void parseArgsWideMove(Node node, uint8_t *sf, uint8_t *hw, uint16_t *imm, uint8
 }
 
 // produces the instruction word with given components
-void composeWordArithmetic(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t type, uint8_t opi, uint8_t sh, uint16_t imm, uint8_t rn, uint8_t rd) {
+static void composeWordArithmetic(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t type, uint8_t opi, uint8_t sh, uint16_t imm, uint8_t rn, uint8_t rd) {
   putBits(result, sf, 31);
   putBits(result, opc, 29);
   putBits(result, type, 26);
@@ -38,7 +38,7 @@ void composeWordArithmetic(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t ty
   putBits(result, rd, 0);
 }
 
-void composeWordWideMove(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t type, uint8_t opi, uint8_t hw, uint16_t imm, uint8_t rd) {
+static void composeWordWideMove(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t type, uint8_t opi, uint8_t hw, uint16_t imm, uint8_t rd) {
   putBits(result, sf, 31);
   putBits(result, opc, 29);
   putBits(result, type, 26);
@@ -48,7 +48,8 @@ void composeWordWideMove(uint32_t *result, uint8_t sf, uint8_t opc, uint8_t type
   putBits(result, rd, 0);
 }
 
-uint32_t arithmetic(Node node) {
+// Data Processing Immediate Arithmetic - deals with add, adds, sub, subs
+uint32_t arithmeticImm(Node node) {
   uint32_t result = 0;
   uint8_t sf;
   uint8_t opc;
@@ -71,6 +72,7 @@ uint32_t arithmetic(Node node) {
   return result;
 }
 
+// Data Processing Wide Move - deals with movn, movz, movk
 uint32_t wideMove(Node node) {
   uint32_t result = 0;
   uint8_t sf;
