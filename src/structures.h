@@ -35,8 +35,11 @@ extern List createList(Node startNode, Node endNode, uint8_t count);
 extern List createListWithStart(Node startNode);
 extern List createListWithBoth(Node startNode, Node endNode);
 
-// Node creation
+// Node creation, addition and printing
 extern Node createNode(uint8_t memoryAddress, const char* type, const char** args, uint8_t num);
+extern Node addNode(Node currNode, Node addNode, List list);
+extern char *printNode(Node node, char *representation);
+
 
 
 

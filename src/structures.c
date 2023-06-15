@@ -101,10 +101,29 @@ Node createNode(uint8_t memoryAddress, const char* type, const char** args, uint
   }
 
 
+
+
   newNode->num = num;
   newNode->next = NULL;
 
   return newNode;
+}
+
+
+Node addNode(Node currNode, Node addNode, List list) {
+  currNode->next = addNode;
+  list->count ++;
+  return currNode;
+}
+
+char *printNode(Node node, char *representation) {
+  char builder[100];
+  strcpy(builder, node->type);
+  for (int i = 0; i < node->count; i++) {
+    strcat(builder, (node->args)[i]);
+  }
+  strcpy(representation, builder);
+  return representation;
 }
 
 
