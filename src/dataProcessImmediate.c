@@ -92,3 +92,71 @@ uint32_t wideMove(Node node) {
   composeWordWideMove(&result, sf, opc, 0b100, opi, hw, imm, rd);
   return result;
 }
+
+// ALIASES
+
+// cmp rn, <op2> = subs rzrm rn, <op2>
+uint32_t compare(Node node) {
+    char** newArgs; // NEED TO ADD RZR AT THE FRONT
+    Node copy = createNode(node.memoryAddress,
+                           node.type,
+                           newArgs,
+                           num + 1);
+    uint32_t result = arithmeticImm(copy);
+    freeNode(copy);
+    return result;
+}
+
+// cmp rn, <op2> = subs rzrm rn, <op2>
+// cmn rn, <op2> = adds rzrm rn, <op2>
+uint32_t compare(Node node) {
+    char** newArgs[num+1][5];
+    newArgs[0] = "11111"; // adding RZR at the front
+    for (int i = 0; i < num; i++) {
+        newArgs[i + 1] = node->args[i]
+    }
+
+    Node copy = createNode(node.memoryAddress,
+                           strcmp(node.type, "cmp") ? "subs" : "adds",
+                           newArgs,
+                           num + 1);
+    uint32_t result = arithmeticImm(copy);
+    freeNode(copy);
+    return result;
+}
+
+// neg(s) rd, <op2> = sub(s) rd, rzr, <op2>
+uint32_t negate(Node node) {
+    char** newArgs[num+1][5];
+    newArgs[0] = node->args[0];
+    newArgs[1] = "11111"; // Adding RZR in the middle
+    if (num == 2) {
+        newArgs[2] = node->args[2];
+    }
+
+    Node copy = createNode(node.memoryAddress,
+                           strcmp(node.type, "neg") ? "sub" : "subs",
+                           newArgs,
+                           num + 1);
+    uint32_t result = arithmeticImm(copy);
+    freeNode(copy);
+    return result;
+}
+
+
+// tst rn, <op2> = ands rzr, rn, <op2>
+uint32_t testBits(Node node) {
+    char** newArgs[num+1][5];
+    newArgs[0] = "11111"; // adding RZR at the front
+    for (int i = 0; i < num; i++) {
+        newArgs[i + 1] = node->args[i]
+    }
+
+    Node copy = createNode(node.memoryAddress,
+                           "ands",
+                           newArgs,
+                           num + 1);
+    uint32_t result = arithmeticImm(copy);
+    freeNode(copy);
+    return result;
+}
