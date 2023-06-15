@@ -22,7 +22,7 @@ uint32_t unconditionalRegisterA(Node node) {
     uint32_t binary;
     binary += 0b1101011 << 25;
     binary += 0b11111 << 16;
-    binary += xn << 25;
+    binary += node.args[0] << 25;
     return binary;
 }
 
