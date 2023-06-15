@@ -7,6 +7,41 @@
 #include "structures.h"
 #define MAX_SYMBOLS 100
 
+
+symbolEntry createEntry(char *label, uint8_t memoryAddress) {
+  symbolEntry newEntry = malloc(sizeof(struct symbolEntry));
+  if (newEntry == NULL) {
+    printf("Malloc failed when allocating newEntry");
+    return NULL;
+  }
+
+  strcpy(newEntry->label, label);
+  newEntry->memoryAddress = memoryAddress;
+}
+
+symbolTable createSymTable(int size, int count, symbolEntry *table) {
+  symbolTable newTable = malloc(sizeof(struct symbolTable));
+  if (newTable == NULL) {
+    printf("Malloc failed when allocating newTable");
+    return NULL;
+  }
+
+  newTable->size = size;
+  newTable->count = count;
+  for (int i = 0; i < count; i++) {
+//    newTable->table[i] = malloc(sizeof(struct symbolEntry));
+//    if (newTable->table[i] == NULL) {
+//      printf("Malloc failed allocating table[%d]", i);
+//      free(newTable);
+//      return NULL;
+//    }
+    newTable->table[i] = table[i];
+  }
+
+  return newTable;
+}
+
+
 uint8_t addressSearch(symbolTable symtable, char *label) {
   for (int i = 0; i < (symtable->count); i++) {
     if (strcmp(symtable->table[i]->label, label) == 0) {
