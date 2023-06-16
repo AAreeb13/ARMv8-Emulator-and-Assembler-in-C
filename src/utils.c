@@ -39,3 +39,10 @@ void insertArg(Node node, char *arg, int index) {
   node -> args[index] = realloc(node -> args[index], sizeof(char) * (strlen(arg) + 1));
   strcpy(node -> args[index], arg);
 }
+
+// changes the type of @param node->type to @param type
+void changeType(Node node, char *type) {
+  int len = strlen(type) + 1;
+  node -> type = realloc(node -> type, len);
+  strcpy(node -> type, type);
+}
