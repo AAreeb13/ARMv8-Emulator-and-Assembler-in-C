@@ -45,11 +45,11 @@ uint32_t getAddress(symbolTable symtable, char *label) {
     }
   }
   printf("Label not found!");
-  return NULL;
+  return -1;
 }
 
 
-Node createNode(uint32_t memoryAddress, const char* type, const char** args, int num) {
+Node createNode(uint32_t memoryAddress, const char* type, int num, const char** args) {
   Node newNode = malloc(sizeof(struct Node));
   if (newNode == NULL) {
     printf("Malloc failed when allocating newNode");
@@ -111,6 +111,30 @@ Node addNodeToNode(Node currNode, Node addNode, List list) {
   return currNode;
 }
 
+Node createAlisCopyNode(Node node, int n, char *arg) {
+  //Creating the array with extra element at index n
+  char *arrayOfArgs[node->num + 1];
+  int j = 0;
+  for (int i = 0; i < node->num + 1; i++) {
+    if (i == n) {
+      arrayOfArgs[i] = malloc(sizeof(strlen(arg) + 1));
+      strcpy(arrayOfArgs[i], arg);
+    }
+    arrayOfArgs[i] = malloc(sizeof(strlen(node->arg[j]) + 1));
+    strcpy(arrayOfArgs[i], node->arg[j]);
+    j++;
+  }
+  
+  //Creating copyNode with new string inserted
+  Node copyNode = createNode(node->memoryAddress,
+  node->type,node->num + 1, arrayOfArgs);
+  copyNode->next = node->next;
+
+  
+  return copyNode;
+}
+
+
 void printNode(Node node) {
   char builder[100];
   strcpy(builder, node->type);
@@ -155,7 +179,7 @@ List createListWithStart(Node startNode) {
 }
 
 List createListWithBoth(Node startNode, Node endNode) {
-  return createList(startNode, endNode, NULL);
+  return createList(startNode, endNode, -1);
 }
 
 

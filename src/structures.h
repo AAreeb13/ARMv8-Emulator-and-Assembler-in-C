@@ -47,7 +47,7 @@ typedef struct symbolTable *symbolTable;
 
 
 // Node creation, addition and printing
-extern Node createNode(uint32_t memoryAddress, const char* type, const char** args, int num);
+extern Node createNode(uint32_t memoryAddress, const char* type, int num, const char** args);
 extern Node addNodeToNode(Node currNode, Node addNode, List list);
 extern void printNode(Node node);
 
