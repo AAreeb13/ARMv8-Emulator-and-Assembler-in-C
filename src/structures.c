@@ -48,8 +48,40 @@ uint32_t getAddress(symbolTable symtable, char *label) {
   return -1;
 }
 
+funcPtrEntry createFuncEntry(char *name, nodeFunc func) {
+  funcPtrEntry funcPtr = malloc(sizeof (struct funcPtrEntry));
+  if (funcPtr == NULL) {
+    printf("Malloc failed when allocating funcPtr");
+    return NULL;
+  }
+  funcPtr->name = strdup(name);
+  funcPtr->func = func;
 
-Node createNode(uint32_t memoryAddress, const char* type, int num, const char** args) {
+  return funcPtr;
+}
+
+//table is an array of function pointer entries
+funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]){
+  funcPtrTable funcTable = malloc(sizeof (struct funcPtrTable));
+  if (funcTable == NULL) {
+    printf("Malloc failed when allocating funcTable");
+    return NULL;
+  }
+
+  funcTable->count = count;
+  funcTable->max_size = max_size;
+
+  for (int i = 0; i < count; i++) {
+    funcTable->table[i] = table[i];
+  }
+
+  return funcTable;
+}
+
+//funcPtrEntry[] createTable
+
+
+Node createNode(uint32_t memoryAddress, const char *type, int num, const char** args) {
   Node newNode = malloc(sizeof(struct Node));
   if (newNode == NULL) {
     printf("Malloc failed when allocating newNode");
@@ -94,8 +126,6 @@ Node createNode(uint32_t memoryAddress, const char* type, int num, const char** 
 
     strcpy(newNode->args[i], args[i]);
   }
-
-
 
 
   newNode->num = num;
@@ -233,14 +263,13 @@ void freeList(List list) {
    - The node must be a valid pointer to a Node structure.
 */
 void freeNode(Node node) {
-  free(node->memoryAddress);
   free(node->type);
-  free(node->next);
   // Free each of the strings stored in args
   for (int i = 0; i < node->num; i++){
     free((node->args)[i]);
   }
-  free(node->num);
+  free(node->args);
+  free(node);
 }
 
 
@@ -253,6 +282,12 @@ int main() {
   }
   Node newnode = createNode(1932, "ldr", 5, strings);
   printNode(newnode);
+  freeNode(newnode);
+  for (int i = 0; i < 5; i++) {
+    free(strings[i]);
+  }
+  free(strings);
+
 }
 
 
