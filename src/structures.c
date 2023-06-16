@@ -120,8 +120,8 @@ Node createAlisCopyNode(Node node, int n, char *arg) {
       arrayOfArgs[i] = malloc(sizeof(strlen(arg) + 1));
       strcpy(arrayOfArgs[i], arg);
     }
-    arrayOfArgs[i] = malloc(sizeof(strlen(node->arg[j]) + 1));
-    strcpy(arrayOfArgs[i], node->arg[j]);
+    arrayOfArgs[i] = malloc(sizeof(strlen(node->args[j]) + 1));
+    strcpy(arrayOfArgs[i], node->args[j]);
     j++;
   }
   
@@ -139,6 +139,7 @@ void printNode(Node node) {
   char builder[100];
   strcpy(builder, node->type);
   for (int i = 0; i < node->num; i++) {
+    strcat(builder, " ");
     strcat(builder, (node->args)[i]);
   }
   printf("%s\n", builder);
@@ -240,6 +241,18 @@ void freeNode(Node node) {
     free((node->args)[i]);
   }
   free(node->num);
+}
+
+
+int main() {
+  char **strings = malloc(sizeof(char *) * 5);
+  char tocpy[5][4] = {"X1", "R2", "ROM", "Ram", "BOM"};
+  for (int i = 0; i < 5; i++) {
+    strings[i] = malloc(4);
+    strcpy(strings[i], tocpy[i]);
+  }
+  Node newnode = createNode(1932, "ldr", 5, strings);
+  printNode(newnode);
 }
 
 
