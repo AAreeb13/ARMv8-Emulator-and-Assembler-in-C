@@ -1,6 +1,9 @@
 #ifndef ARM_PROJECT_STRUCTURES_H
 #define ARM_PROJECT_STRUCTURES_H
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 typedef struct Node *Node;
 

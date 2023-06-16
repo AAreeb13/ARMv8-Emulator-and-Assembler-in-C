@@ -26,3 +26,16 @@ void parseLiteral(char *literal, uint32_t *imm) {
     }
   }
 }
+
+// inserts @param arg into @param index in @param node->args
+void insertArg(Node node, char *arg, int index) {
+  node -> num++;
+  node -> args = realloc(node -> args, sizeof(char *) * node -> num);
+  for (int i = (node -> num) - 1; i > index; i--) {
+    int len = strlen(node -> args[i - 1]) + 1;
+    node -> args[i] = realloc(node -> args[i], sizeof(char) * len);
+    strcpy(node -> args[i], node -> args[i - 1]);
+  }
+  node -> args[index] = realloc(node -> args[index], sizeof(char) * (strlen(arg) + 1));
+  strcpy(node -> args[index], arg);
+}
