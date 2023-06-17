@@ -10,7 +10,7 @@ void putBits(uint32_t *total, uint32_t bits, uint8_t endIndex) {
 // processes register argument
 void parseReg(char *reg, uint8_t *sf, uint8_t *regValue) {
   *sf = reg[0] == 'x' ? 1 : 0;
-  *regValue = atoi(++reg);
+  *regValue = strchr(reg, 'z') != NULL ? 0b11111 : atoi(++reg);
 }
 
 // processes literal
