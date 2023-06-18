@@ -61,6 +61,15 @@ struct funcPtrTable {
 };
 typedef struct funcPtrTable *funcPtrTable;
 
+// Symbol Entries and Table creation and functions
+extern symbolEntry createSymEntry(char *label, uint32_t memoryAddress);
+extern symbolTable createSymTable(int max_size, int count, symbolEntry *table);
+extern uint32_t getAddress(symbolTable symtable, char *label);
+
+// Function Pointer Entries and Table creation and functions
+extern funcPtrEntry createFuncEntry(char *name, nodeFunc func);
+extern funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]);
+
 
 // Node creation, addition and printing
 extern Node createNode(uint32_t memoryAddress, const char* type, int num, const char** args);
@@ -74,11 +83,12 @@ extern List createListWithStart(Node startNode);
 extern List createListWithBoth(Node startNode, Node endNode);
 
 // Freeing functions
-extern void freeSymbolEntry(symbolEntry symEntry);
-extern void freeSymbolTable(symbolTable symTable);
-extern void freeList(List list);
-extern void freeNode(Node node);
-
+extern void freeSymbolEntry(symbolEntry symEntry); //
+extern void freeSymbolTable(symbolTable symTable);  //
+extern void freeFuncPtrEntry(funcPtrEntry entry); //
+extern void freeFuncPtrTable(funcPtrTable funTable); //
+extern void freeNode(Node node); //
+extern void freeList(List list); //
 
 
 

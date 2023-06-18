@@ -8,7 +8,8 @@
 #define MAX_SYMBOLS 100
 
 
-symbolEntry createEntry(char *label, uint32_t memoryAddress) {
+// Symbol entry and table functions
+symbolEntry createSymEntry(char *label, uint32_t memoryAddress) {
   symbolEntry newEntry = malloc(sizeof(struct symbolEntry));
   if (newEntry == NULL) {
     printf("Malloc failed when allocating newEntry");
@@ -48,6 +49,10 @@ uint32_t getAddress(symbolTable symtable, char *label) {
   return -1;
 }
 
+
+
+
+// Function Ptr entry and table functions
 funcPtrEntry createFuncEntry(char *name, nodeFunc func) {
   funcPtrEntry funcPtr = malloc(sizeof (struct funcPtrEntry));
   if (funcPtr == NULL) {
@@ -61,7 +66,7 @@ funcPtrEntry createFuncEntry(char *name, nodeFunc func) {
 }
 
 //table is an array of function pointer entries
-funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]){
+funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]) {
   funcPtrTable funcTable = malloc(sizeof (struct funcPtrTable));
   if (funcTable == NULL) {
     printf("Malloc failed when allocating funcTable");
@@ -76,6 +81,16 @@ funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]){
   }
 
   return funcTable;
+}
+
+nodeFunc getFuncPtr(char *label, funcPtrTable funTable) {
+  for (int i = 0; i < funTable->count; i++) {
+    if (strcmp(label, funTable->table[i]->name)) {
+      return funTable->table[i]->func;
+    }
+  }
+  printf("funcPtr not found!");
+  return NULL;
 }
 
 //funcPtrEntry[] createTable
@@ -199,6 +214,7 @@ List createList(Node startNode, Node endNode, int count) {
 
   list->first = startNode;
   list->last = endNode;
+  assert(count >= 0 );
   list->count = count;
 
   return list;
@@ -214,7 +230,31 @@ List createListWithBoth(Node startNode, Node endNode) {
 }
 
 
+
+
 // Free Functions Below
+
+void freeFuncPtrEntry(funcPtrEntry entry) {
+  free(entry->name);
+  free(entry);
+}
+
+/*
+ * Frees the memory allocated for a funcPtr table and its entries.
+ * Parameters:
+   - funTable: A pointer to the funcPtrTable structure
+ * Preconditions:
+   - The list must be a valid pointer to a non-null symbol Table structure.
+*/
+void freeFuncPtrTable(funcPtrTable funTable) {
+  // Frees each of the entries
+  for(int i = 0; i < funTable->count; i++) {
+    freeFuncPtrEntry(funTable->table[i]);
+  }
+  free(funTable);
+}
+
+
 
 
 void freeSymbolEntry(symbolEntry symEntry) {
@@ -224,9 +264,9 @@ void freeSymbolEntry(symbolEntry symEntry) {
 /*
  * Frees the memory allocated for a symbol table and its entries.
  * Parameters:
-   - symTable: A pointer to the symbolTable structure representing the symbol Table to be freed.
+   - symTable: A pointer to the symbolTable structure
  * Preconditions:
-   - The list must be a valid pointer to a non-empty symbol Table structure.
+   - The list must be a valid pointer to a non-null symbol Table structure
 */
 void freeSymbolTable(symbolTable symTable) {
   for (int i = 0; i < symTable->count; i++) { // Free each of the symbolEntries
@@ -236,10 +276,21 @@ void freeSymbolTable(symbolTable symTable) {
 }
 
 
+void freeNode(Node node) {
+  free(node->type);
+  // Free each of the strings stored in args
+  for (int i = 0; i < node->num; i++){
+    free((node->args)[i]);
+  }
+  free(node->args);
+  free(node);
+}
+
+
 /*
  * Frees the memory allocated for a linked list and its nodes.
  * Parameters:
-   - list: A pointer to the List structure representing the linked list to be freed.
+   - list: A pointer to the List structure
  * Preconditions:
    - The list must be a valid pointer to a non-empty List structure.
 */
@@ -254,23 +305,6 @@ void freeList(List list) {
   free(list);
 }
 
-
-/*
- * Frees the memory allocated for a single node of the linked list.
- * Parameters:
-   - node: A pointer to the Node structure representing the node to be freed.
- * Preconditions:
-   - The node must be a valid pointer to a Node structure.
-*/
-void freeNode(Node node) {
-  free(node->type);
-  // Free each of the strings stored in args
-  for (int i = 0; i < node->num; i++){
-    free((node->args)[i]);
-  }
-  free(node->args);
-  free(node);
-}
 
 
 int main() {
