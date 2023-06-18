@@ -4,6 +4,7 @@
 #include "structures.h"
 #include "utils.h"
 
+
 //Pre args = { "ldr" || "str","Xn || Wn", "[Xm ,..]!" || <literal> || }.
 uint32_t singleDataTransfer(Node instruction) {
   uint8_t totalBitsAdded = 0;
@@ -87,7 +88,6 @@ uint32_t registerOffset(char **args){
   char xm[5];
   strncpy(xm,args[2],strlen(args[2])-1);
   xm[strlen(args[2])-1] = '\0';
-  //uint8_t *redundantsf;
   uint8_t xmValue;
   parseReg(xm,0, &xmValue);
   putBits(&offset,xmValue,6);
@@ -100,12 +100,24 @@ void loadLiteral(uint32_t binary, char **args){
     parseLiteral(args[2],&simm19);
     simm19 = simm19 & 0b1111111111111111111;
   }else{
-    symbolTable st;
-    simm19 = getAddress(st, args[1]);
+    symbolTable mainSymTable;
+    simm19 = getAddress(mainSymTable, args[1]);
     //label
   }
   putBits(&binary,simm19,5);
 
+}
+
+
+//INTEGER LABEL
+uint32_t intLabel(Node instruction){
+  char *strNum = instruction->args[0];
+  char literal[strlen(strNum)+1];
+  literal[0] = '#'; literal[1] = '\0';
+  strcat(literal,strNum);
+  uint32_t value;
+  parseLiteral(literal, &value);
+  return value;
 }
 
 

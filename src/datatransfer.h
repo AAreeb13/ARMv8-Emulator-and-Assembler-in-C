@@ -22,6 +22,7 @@ extern uint32_t preIndexed(char **);
 extern uint32_t registerOffset(char **);
 extern void loadLiteral(uint32_t , char **);
 
+extern uint32_t intLabel(Node);
 
 
 #endif //SRC_DATATRANSFER_H
