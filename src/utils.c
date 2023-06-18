@@ -27,6 +27,20 @@ void parseLiteral(char *literal, uint32_t *imm) {
   }
 }
 
+uint32_t parseHex(char hexString[]) {
+    char *endPtr;
+    uint32_t value;
+
+    // Convert the hexadecimal string to a decimal value
+    value = strtol(hexString, &endPtr, 16);
+
+    // Check if conversion was successful
+    if (*endPtr != '\0') {
+        printf("Invalid hexadecimal string\n");
+    }
+
+    return value;
+}
 // typeArray[num of elems][length] - Contains all the types
 // Needed for parsing and determining if a word is a label or not
 char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
@@ -45,3 +59,5 @@ int labelCheck(char *word) {
   }
   return 1;
 }
+
+

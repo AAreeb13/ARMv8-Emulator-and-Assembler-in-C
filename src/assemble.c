@@ -1,22 +1,14 @@
 #include <stdlib.h>
-<<<<<<< HEAD
-#include "structures.h"
-#include "utils.h"
-#include "dataProcessImmediate.h"
-#include "dataProcessRegister.h"
-||||||| e71c9e6
-=======
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include "dataProcessImmediate.h"
+#include "dataProcessRegister.h"
 #include "utils.h"
 #include "structures.h"
 
 #define SIZE_OF_BUFFER 100
 #define DELIMITERS " ,"
-
-
->>>>>>> master
 
 int main(int argc, char **argv) {
   assert(argc == 3);
