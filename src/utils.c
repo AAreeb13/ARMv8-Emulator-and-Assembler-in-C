@@ -1,5 +1,4 @@
 #include "utils.h"
-#include <stdbool.h>
 
 // puts bits in instruction word in desired location
 // @param endIndex - index of last bit in @param bits

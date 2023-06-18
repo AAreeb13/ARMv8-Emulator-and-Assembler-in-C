@@ -53,3 +53,7 @@ uint32_t mneg(Node node) {
   insertArg(node, strdup("rzr"), 3);
   return multiply(node);
 }
+
+uint32_t nop(Node node) {
+  return 0b11010101000000110010000000011111;
+}

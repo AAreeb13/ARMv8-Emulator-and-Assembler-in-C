@@ -15,5 +15,6 @@ extern uint32_t mvn(Node node);
 extern uint32_t mov(Node node);
 extern uint32_t mul(Node node);
 extern uint32_t mneg(Node node);
+extern uint32_t nop(Node node);
 
 #endif //SRC_ALIASES_H
