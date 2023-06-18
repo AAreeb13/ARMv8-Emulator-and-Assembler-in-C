@@ -33,8 +33,10 @@ uint32_t unconditionalRegisterA(Node node) {
 
 // b.cond label -> branch to literal iff PSTATE satisfied cond
 // takes in literal address, not the label address
-uint32_t conditionalBranchesA(Node node, char mnemonic[]) {
+// gives Node type as b.cond
+uint32_t conditionalBranchesA(Node node) {
     // need symbol table to get label address
+    char *mnemonic = node->type;
     uint32_t branchAddress = parseHex(node->args[0]);
     uint32_t result;
     uint8_t cond;

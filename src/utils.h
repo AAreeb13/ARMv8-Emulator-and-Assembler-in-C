@@ -15,5 +15,4 @@ extern uint32_t parseHex(char *);
 extern char typeArray[33][5];
 extern int labelCheck(char *word);
 
-
 #endif //ARM_PROJECT_UTILS_H
