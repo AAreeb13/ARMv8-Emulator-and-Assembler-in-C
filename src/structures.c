@@ -60,6 +60,11 @@ funcPtrEntry createFuncEntry(char *name, nodeFunc func) {
     return NULL;
   }
   funcPtr->name = strdup(name);
+  if (name == NULL) {
+    printf("Malloc failed when allocating FuncEntry name");
+    free(funcPtr);
+    return NULL;
+  }
   funcPtr->func = func;
 
   return funcPtr;
@@ -85,7 +90,7 @@ funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]) {
 
 nodeFunc getFuncPtr(char *label, funcPtrTable funTable) {
   for (int i = 0; i < funTable->count; i++) {
-    if (strcmp(label, funTable->table[i]->name)) {
+    if (strcmp(label, funTable->table[i]->name) == 0) {
       return funTable->table[i]->func;
     }
   }
@@ -150,9 +155,10 @@ Node createNode(uint32_t memoryAddress, const char *type, int num, const char** 
 }
 
 
-Node addNodeToNode(Node currNode, Node addNode, List list) {
+Node addNextNode(Node currNode, Node addNode, List list) {
   currNode->next = addNode;
   list->count ++;
+  list->last = addNode;
   return currNode;
 }
 
@@ -222,14 +228,24 @@ List createList(Node startNode, Node endNode, int count) {
 
 // Similar to createList 
 List createListWithStart(Node startNode) {
-  return createList(startNode, NULL, 0);
+  return createList(startNode, NULL, 1);
 }
 
 List createListWithBoth(Node startNode, Node endNode) {
   return createList(startNode, endNode, -1);
 }
 
-
+void printList(List list) {
+  Node node = list->first;
+  for (int i = 0; i < list->count; i++) {
+    if (node == NULL) {
+      printf("NULL NODE REACHED!");
+      return;
+    }
+    printNode(node);
+    node = node->next;
+  }
+}
 
 
 // Free Functions Below
