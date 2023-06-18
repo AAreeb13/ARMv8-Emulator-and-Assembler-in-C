@@ -1,3 +1,4 @@
+#include <string.h>
 #include "utils.h"
 
 // puts bits in instruction word in desired location
@@ -24,4 +25,23 @@ void parseLiteral(char *literal, uint32_t *imm) {
       printf("Parsing literal failed!");
     }
   }
+}
+
+// typeArray[num of elems][length] - Contains all the types
+// Needed for parsing and determining if a word is a label or not
+char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
+                         "neg", "negs", "and", "ands", "bic", "bics",
+                         "eor", "orr", "eon", "orn", "tst", "movk",
+                         "movn", "movz", "mov", "mvn", "madd", "msub",
+                         "mul", "mneg", "b", "b.", "br", "str",
+                         "ldr", "nop", ".int"};
+
+// Checks if given string is label by checking against typeArray
+int labelCheck(char *word) {
+  for (int i = 0; i < 33; i++) {
+    if (strcmp(word, typeArray[i]) == 0) {
+      return 0;
+    }
+  }
+  return 1;
 }

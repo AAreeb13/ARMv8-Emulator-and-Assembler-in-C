@@ -6,7 +6,7 @@
 # It is included in the main 'build.ninja'.
 
 # =============================================================================
-# Project: C_Project_Final
+# Project: src
 # Configurations: Debug
 # =============================================================================
 # =============================================================================
@@ -14,7 +14,7 @@
 #############################################
 # Rule for compiling C files.
 
-rule C_COMPILER__C_Project_Final_Debug
+rule C_COMPILER__src_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = /usr/bin/cc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -24,7 +24,7 @@ rule C_COMPILER__C_Project_Final_Debug
 #############################################
 # Rule for linking C executable.
 
-rule C_EXECUTABLE_LINKER__C_Project_Final_Debug
+rule C_EXECUTABLE_LINKER__src_Debug
   command = $PRE_LINK && /usr/bin/cc $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking C executable $TARGET_FILE
   restat = $RESTAT
@@ -42,7 +42,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/lib/clion-2022.2.3/bin/cmake/linux/bin/cmake --regenerate-during-build -S"/homes/iu22/C Project Final" -B"/homes/iu22/C Project Final/cmake-build-debug"
+  command = /usr/lib/clion-2022.2.3/bin/cmake/linux/bin/cmake --regenerate-during-build -S"/homes/iu22/Arm project/armv8_2/src" -B"/homes/iu22/Arm project/armv8_2/src/cmake-build-debug"
   description = Re-running CMake...
   generator = 1
 

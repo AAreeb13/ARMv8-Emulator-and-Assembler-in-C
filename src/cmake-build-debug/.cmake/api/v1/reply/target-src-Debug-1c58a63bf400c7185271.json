@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "C_Project_Final"
+			"path" : "src"
 		}
 	],
 	"backtrace" : 1,
@@ -52,7 +52,7 @@
 			[
 				{
 					"backtrace" : 2,
-					"path" : "/homes/iu22/C Project Final/."
+					"path" : "/homes/iu22/Arm project/armv8_2/src/."
 				}
 			],
 			"language" : "C",
@@ -67,16 +67,14 @@
 			"sourceIndexes" : 
 			[
 				0,
-				2,
-				4,
-				6,
-				7,
-				9,
-				11
+				1,
+				3,
+				5,
+				7
 			]
 		}
 	],
-	"id" : "C_Project_Final::@6890427a1f51a3e7e1df",
+	"id" : "src::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -92,8 +90,8 @@
 		],
 		"language" : "C"
 	},
-	"name" : "C_Project_Final",
-	"nameOnDisk" : "C_Project_Final",
+	"name" : "src",
+	"nameOnDisk" : "src",
 	"paths" : 
 	{
 		"build" : ".",
@@ -106,24 +104,20 @@
 			"sourceIndexes" : 
 			[
 				0,
-				2,
-				4,
-				6,
-				7,
-				9,
-				11
+				1,
+				3,
+				5,
+				7
 			]
 		},
 		{
 			"name" : "Header Files",
 			"sourceIndexes" : 
 			[
-				1,
-				3,
-				5,
-				8,
-				10,
-				12
+				2,
+				4,
+				6,
+				8
 			]
 		}
 	],
@@ -132,13 +126,8 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "branch.c",
+			"path" : "assemble.c",
 			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"path" : "branch.h",
-			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 1,
@@ -165,40 +154,23 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "emulate.c",
+			"path" : "structures.c",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "misc.c",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"path" : "misc.h",
+			"path" : "structures.h",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "storeandLoad.c",
+			"path" : "utils.c",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
-			"path" : "storeandLoad.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "structure.c",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"path" : "structure.h",
+			"path" : "utils.h",
 			"sourceGroupIndex" : 1
 		}
 	],
