@@ -3,16 +3,12 @@
 //
 #include <string.h>
 #include "utils.h"
+#include <malloc.h>
+#include "structures.h"
 
 
-// typeArray[num of elems][length] - Contains all the types
-// Needed for parsing and determining if a word is a label or not
-char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
-                         "neg", "negs", "and", "ands", "bic", "bics",
-                         "eor", "orr", "eon", "orn", "tst", "movk",
-                         "movn", "movz", "mov", "mvn", "madd", "msub",
-                         "mul", "mneg", "b", "b.", "br", "str",
-                         "ldr", "nop", ".int"};
+extern char typeArray[33][5];
+extern nodeFunc funcArray[];
 
 
 // Checks if given string is label by checking against typeArray
@@ -24,6 +20,45 @@ int labelCheck(char *word) {
   }
   return 1;
 }
+
+char **createMallocedStrings(int count, int size) {
+  char **strings = malloc(sizeof(char *) * count);
+  if (strings == NULL) {
+    printf("Malloc failed when allocating strings");
+    return NULL;
+  }
+  for (int i = 0; i < count; i++) {
+    strings[i] = malloc(size);
+    if (strings[i] == NULL) {
+      printf("Malloc failed when allocating strings[%d]", i);
+      for (int j = 0; j < i; j++) {
+        free(strings[j]);
+      }
+    }
+  }
+  return strings;
+}
+
+
+void freeMallocedStrings(char **strings, int count) {
+  for (int i = 0; i < count; i ++) {
+    free(strings[i]);
+  }
+  free(strings);
+}
+
+// Creates the table with the needed types and pointers
+funcPtrTable createMainFuncTable() {
+  funcPtrEntry table[33];
+  for (int i = 0; i < 33; i++) {
+    table[i] = createFuncEntry(typeArray[i], funcArray[i]);
+  }
+  return (createFuncTable(33,table));
+}
+
+
+
+
 
 
 

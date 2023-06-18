@@ -6,7 +6,26 @@
 #include "structures.h"
 
 #define SIZE_OF_BUFFER 100
-#define DELIMITERS " ,"
+#define DELIMITERS " ,\n"
+#define STRINGS_COUNT 10
+#define STRINGS_SIZE 20
+
+// typeArray[num of elems][length] - Contains all the types
+// Needed for parsing and determining if a word is a label or not
+char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
+                         "neg", "negs", "and", "ands", "bic", "bics",
+                         "eor", "orr", "eon", "orn", "tst", "movk",
+                         "movn", "movz", "mov", "mvn", "madd", "msub",
+                         "mul", "mneg", "b", "b.", "br", "str",
+                         "ldr", "nop", ".int"};
+
+nodeFunc funcArray[] = {arithmetic, arithmetic, arithmetic, arithmetic, cmp, cmn, neg,
+                    negs, arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic,
+                    arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic, tst,
+                    wideMove, wideMove, wideMove, mov, mvn, multiply, multiply, mul, mneg,
+                    unconditionalOffsetA, conditionalBranchesA, unconditionalRegisterA,
+                    singleDataTransfer, singleDataTransfer, nop, literal};
+
 
 
 
@@ -14,13 +33,14 @@ int main(int argc, char **argv) {
   assert(argc == 3);
 
   // Initialising the funcPtrTale, symbolTable and memory address count
-  funcPtrEntry funPtrTable = createMainFuncEntry();
+  //funcPtrEntry funPtrTable = createMainFuncEntry();
   int symMaxSize = INITIAL_SYMBOLTABLE_SIZE;
   symbolEntry symTable[INITIAL_SYMBOLTABLE_SIZE];
   int symCount = 0;
   int memoryAddress = 0;
   char *token;   // Hold token from tokenizer
-  char argsCopy[10][20];  // Extract and store type and arguments from each line
+  char **argsCopy = createMallocedStrings(STRINGS_COUNT, STRINGS_SIZE); // Extract and store type and arguments from each line
+
   int argsCount = 0; // Keep count of arguments extracted from line
 
   // Open the source code for reading
@@ -49,13 +69,13 @@ int main(int argc, char **argv) {
     } else if (labelCheck(token)) { // Checks if label
       symTable[symCount] = createSymEntry(token, memoryAddress);
       symCount++;
-      memoryAddress = memoryAddress + 4;
     } else {                             // Must be a instruction
       while (token != NULL) {
         strcpy(argsCopy[argsCount], token);
         argsCount++;
         token = strtok(NULL, DELIMITERS);
       }
+
       currNode = createNode(memoryAddress, argsCopy[0], argsCount -1, argsCopy + 1);
       if (prevNode == NULL) {
         prevNode = currNode;
@@ -69,6 +89,9 @@ int main(int argc, char **argv) {
     }
   }
 
+  symbolTable mainSymTable = createSymTable(symCount, symTable);
+
+  printSymTable(mainSymTable);
   printList(list);
   fclose(readFile);
   fclose(writeFile);

@@ -22,14 +22,13 @@ symbolEntry createSymEntry(char *label, uint32_t memoryAddress) {
   return newEntry;
 }
 
-symbolTable createSymTable(int max_size, int count, symbolEntry *table) {
+symbolTable createSymTable(int count, symbolEntry *table) {
   symbolTable newTable = malloc(sizeof(struct symbolTable));
   if (newTable == NULL) {
     printf("Malloc failed when allocating newTable");
     return NULL;
   }
 
-  newTable->max_size = max_size;
   newTable->count = count;
   for (int i = 0; i < count; i++) {
     newTable->table[i] = table[i];
@@ -47,6 +46,13 @@ uint32_t getAddress(symbolTable symtable, char *label) {
   }
   printf("Label not found!");
   return -1;
+}
+
+void printSymTable(symbolTable symTable) {
+  for(int i = 0; i < symTable->count; i ++) {
+    printf("Label : %s, Address: %d\n"
+           , symTable->table[i]->label, symTable->table[i]->memoryAddress);
+  }
 }
 
 
@@ -71,7 +77,7 @@ funcPtrEntry createFuncEntry(char *name, nodeFunc func) {
 }
 
 //table is an array of function pointer entries
-funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]) {
+funcPtrTable createFuncTable(int count, funcPtrEntry table[]) {
   funcPtrTable funcTable = malloc(sizeof (struct funcPtrTable));
   if (funcTable == NULL) {
     printf("Malloc failed when allocating funcTable");
@@ -79,7 +85,6 @@ funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]) {
   }
 
   funcTable->count = count;
-  funcTable->max_size = max_size;
 
   for (int i = 0; i < count; i++) {
     funcTable->table[i] = table[i];
@@ -130,7 +135,7 @@ Node createNode(uint32_t memoryAddress, const char *type, int num, const char** 
 
   // Allocate memory for each args element and copy string
   for (int i = 0; i < num; i++) {
-    newNode->args[i] = malloc(strlen(args[i]) + 1);
+    newNode->args[i] = malloc(sizeof (char) * (strlen(args[i]) + 1));
 
     if (newNode->args[i] == NULL) {
       printf("Malloc failed when allocating arg[%d]", i);
@@ -322,23 +327,23 @@ void freeList(List list) {
 }
 
 
-
-int main() {
-  char **strings = malloc(sizeof(char *) * 5);
-  char tocpy[5][4] = {"X1", "R2", "ROM", "Ram", "BOM"};
-  for (int i = 0; i < 5; i++) {
-    strings[i] = malloc(4);
-    strcpy(strings[i], tocpy[i]);
-  }
-  Node newnode = createNode(1932, "ldr", 5, strings);
-  printNode(newnode);
-  freeNode(newnode);
-  for (int i = 0; i < 5; i++) {
-    free(strings[i]);
-  }
-  free(strings);
-
-}
+//
+//int main() {
+//  char **strings = malloc(sizeof(char *) * 5);
+//  const char* tocpy[4] = {"X1", "R2", "ROM", "Ram", "BOM"};
+//  for (int i = 0; i < 5; i++) {
+//    strings[i] = malloc(4);
+//    strcpy(strings[i], tocpy[i]);
+//  }
+//  Node newnode = createNode(1932, "ldr", 5, tocpy);
+//  printNode(newnode);
+//  freeNode(newnode);
+//  for (int i = 0; i < 5; i++) {
+//    free(strings[i]);
+//  }
+//  free(strings);
+//
+//}
 
 
 

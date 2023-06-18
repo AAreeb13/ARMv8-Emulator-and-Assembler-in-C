@@ -37,7 +37,6 @@ struct symbolEntry {
 typedef struct symbolEntry *symbolEntry;
 
 struct symbolTable {
-    int max_size;
     int count;
     symbolEntry table[INITIAL_SYMBOLTABLE_SIZE];
 };
@@ -55,23 +54,24 @@ struct funcPtrEntry {
 typedef struct funcPtrEntry *funcPtrEntry;
 
 struct funcPtrTable {
-    int max_size;
     int count;
-    funcPtrEntry table[FUNC_TABLE_SIZE]
+    funcPtrEntry table[FUNC_TABLE_SIZE];
 };
+
 typedef struct funcPtrTable *funcPtrTable;
 
 
 // Symbol Entries and Table creation and functions
 extern symbolEntry createSymEntry(char *label, uint32_t memoryAddress);
-extern symbolTable createSymTable(int max_size, int count, symbolEntry *table);
+extern symbolTable createSymTable(int count, symbolEntry *table);
 extern uint32_t getAddress(symbolTable symtable, char *label);
+void printSymTable(symbolTable symTable);
 
 // Function Pointer Entries and Table creation and functions
 extern funcPtrEntry createFuncEntry(char *name, nodeFunc func);
-extern funcPtrTable createFuncTable(int max_size, int count, funcPtrEntry table[]);
+extern funcPtrTable createFuncTable(int count, funcPtrEntry table[]);
 extern nodeFunc getFuncPtr(char *label, funcPtrTable funTable);
-extern funcPtrEntry createMainFuncEntry(); // Creates the table with the needed types and pointers
+
 
 
 // Node creation, addition and printing
