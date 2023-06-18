@@ -6,7 +6,7 @@
 #include "structures.h"
 #include "dataProcessImmediate.h"
 #include "dataProcessRegister.h"
-//#include "dataProcess.h"
+#include "dataProcess.h"
 
 
 #define SIZE_OF_BUFFER 100
@@ -23,28 +23,26 @@ char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
                          "mul", "mneg", "b", "b.", "br", "str",
                          "ldr", "nop", ".int"};
 
-//nodeFunc funcArray[] = {arithmetic, arithmetic, arithmetic, arithmetic, cmp, cmn, neg,
-//                    negs, arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic,
-//                    arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic, tst,
-//                    wideMove, wideMove, wideMove, mov, mvn, multiply, multiply, mul, mneg,
-//                    unconditionalOffsetA, conditionalBranchesA, unconditionalRegisterA,
-//                    singleDataTransfer, singleDataTransfer, nop, literal};
-
+nodeFunc funcArray[] = {arithmetic, arithmetic, arithmetic, arithmetic, cmp, cmn, neg,
+                    negs, arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic,
+                    arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic, tst,
+                    wideMove, wideMove, wideMove, mov, mvn, multiply, multiply, mul, mneg,
+                    unconditionalOffsetA, conditionalBranchesA, unconditionalRegisterA,
+                    singleDataTransfer, singleDataTransfer, nop, literal};
 
 
 
 int main(int argc, char **argv) {
   assert(argc == 3);
 
-  // Initialising the funcPtrTale, symbolTable and memory address count
-  //funcPtrEntry funPtrTable = createMainFuncEntry();
+  // Phase One: Initialising the funcPtrTale, symbolTable and memory address count
+  funcPtrEntry mainFunTable = createMainFuncEntry();
   int symMaxSize = INITIAL_SYMBOLTABLE_SIZE;
   symbolEntry symTable[INITIAL_SYMBOLTABLE_SIZE];
   int symCount = 0;
   int memoryAddress = 0;
   char *token;   // Hold token from tokenizer
   char **argsCopy = createMallocedStrings(STRINGS_COUNT, STRINGS_SIZE); // Extract and store type and arguments from each line
-
   int argsCount = 0; // Keep count of arguments extracted from line
 
 
@@ -57,31 +55,33 @@ int main(int argc, char **argv) {
 
 
   char buffer[SIZE_OF_BUFFER];
+
+  // Initialising the list and nodes
   Node prevNode = NULL;
   Node currNode;
   List list;
 
 
-  // One Pass - Creates all the nodes and the symbol Table containing the labels
+  // Phase Two: One Pass - Creates all the nodes and the symbol Table containing the labels
   while(fgets(buffer, sizeof(buffer), readFile) != NULL) {
     token = strtok(buffer, DELIMITERS);
     if (token == NULL || token[0] == ' ' || token[0] == '\n') { // Checks if empty line
       continue;
-    } else if (labelCheck(token)) { // Checks if label
+    } else if (labelCheck(token)) { // Checks if label, then adds to symTable
       symTable[symCount] = createSymEntry(token, memoryAddress);
       symCount++;
-    } else {                             // Must be a instruction
+    } else {                             // Must be an instruction
       while (token != NULL) {
         strcpy(argsCopy[argsCount], token);
         argsCount++;
         token = strtok(NULL, DELIMITERS);
       }
-
+      // argsCopy[0] stores the type, so count is 1 less
       currNode = createNode(memoryAddress, argsCopy[0], argsCount -1, argsCopy + 1);
-      if (prevNode == NULL) {
+      if (prevNode == NULL) { // We are processing our first Node, so no previous node
         prevNode = currNode;
         list = createListWithStart(currNode);
-      } else {
+      } else { // Processing node after the first node, so connect previous node to this one
         addNextNode(prevNode, currNode, list);
         prevNode = currNode;
       }
@@ -95,16 +95,39 @@ int main(int argc, char **argv) {
   // By now our list contains all the nodes, mainSymTable contains all the labels and their memory address
 
 
-  printSymTable(mainSymTable);
-  printList(list);
 
-
+  // Phase Three : Process each node and write to file
   // Open the binary file for writing
-  FILE *writeFile = fopen("file.bin", "wb");
+  FILE *writeFile = fopen(argv[2], "wb");
   if (writeFile == NULL) {
     printf("Failed to open the writeFile.\n");
     return 1;
   }
+
+  currNode = list->first;
+  nodeFunc func;
+  uint32_t word;
+  for (int i = 0; i < list->count; i++) {
+    assert (currNode != NULL);
+    func = getFuncPtr(currNode->type, mainFunTable);
+    word = func(currNode);
+    size_t numBytesWritten = fwrite(&word, sizeof(uint32_t), 1, writeFile);
+    if (numBytesWritten != 1) {
+      printf("Error occurred while writing to the file.\n");
+      fclose(writeFile);
+      return 1;
+    }
+    currNode = currNode->next;
+  }
   fclose(writeFile);
+
+  //Phase Four: Free all structures and mallocs
+  freeList(list);
+  freeFuncPtrTable(mainFunTable);
+  freeSymbolTable(mainSymTable);
+  freeMallocedStrings(argsCopy, STRINGS_COUNT);
+
   return EXIT_SUCCESS;
 }
+
+
