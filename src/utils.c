@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include "utils.h"
 
 // puts bits in instruction word in desired location
@@ -60,4 +62,7 @@ int labelCheck(char *word) {
   return 1;
 }
 
-
+uint8_t regAddr(char *reg) {
+    reg++;
+    return atoi(reg);
+}
