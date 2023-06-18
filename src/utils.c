@@ -48,13 +48,13 @@ void freeMallocedStrings(char **strings, int count) {
 }
 
 // Creates the table with the needed types and pointers
-funcPtrTable createMainFuncTable() {
-  funcPtrEntry table[33];
-  for (int i = 0; i < 33; i++) {
-    table[i] = createFuncEntry(typeArray[i], funcArray[i]);
-  }
-  return (createFuncTable(33,table));
-}
+//funcPtrTable createMainFuncTable() {
+//  funcPtrEntry table[33];
+//  for (int i = 0; i < 33; i++) {
+//    table[i] = createFuncEntry(typeArray[i], funcArray[i]);
+//  }
+//  return (createFuncTable(33,table));
+//}
 
 
 
