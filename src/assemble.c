@@ -13,11 +13,11 @@
 #include "dataTransfer.h"
 
 #define SIZE_OF_BUFFER 100
-#define DELIMITERS " ,\n"
+#define DELIMITERS " ,\n:"
 #define STRINGS_COUNT 10
 #define STRINGS_SIZE 20
 
-symbolTable mainSymTable;
+
 // typeArray[num of elems][length] - Contains all the types
 // Needed for parsing and determining if a word is a label or not
 char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
@@ -95,6 +95,8 @@ int main(int argc, char **argv) {
   }
 
   symbolTable mainSymTable = createSymTable(symCount, symTable);
+  giveSymTableBranch(mainSymTable);
+  giveSymTableTransfer(mainSymTable);
   fclose(readFile);
   // By now our list contains all the nodes, mainSymTable contains all the labels and their memory address
 

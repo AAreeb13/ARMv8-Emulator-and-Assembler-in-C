@@ -3,9 +3,16 @@
 #define ARMV8_2_BRANCHING_H
 #include <stdint.h>
 #include "structures.h"
+#include "assemble.h"
+#include "utils.h"
+#include <stdio.h>
+#include <string.h>
 
-uint32_t unconditionalOffsetA(Node);
-uint32_t unconditionalRegisterA(Node);
-uint32_t conditionalBranchesA(Node);
+extern uint32_t unconditionalOffsetA(Node);
+extern uint32_t unconditionalRegisterA(Node);
+extern uint32_t conditionalBranchesA(Node);
+extern void giveSymTableBranch(symbolTable table);
 
+
+//extern symbolTable mainSymTable;
 #endif //ARMV8_2_BRANCHING_H
