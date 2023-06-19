@@ -2,12 +2,15 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "utils.h"
 #include "structures.h"
 #include "dataProcessImmediate.h"
 #include "dataProcessRegister.h"
 #include "dataProcess.h"
-
+#include "aliases.h"
+#include "branching.h"
+#include "dataTransfer.h"
 
 #define SIZE_OF_BUFFER 100
 #define DELIMITERS " ,\n"
@@ -36,7 +39,7 @@ int main(int argc, char **argv) {
   assert(argc == 3);
 
   // Phase One: Initialising the funcPtrTale, symbolTable and memory address count
-  funcPtrEntry mainFunTable = createMainFuncEntry();
+  funcPtrTable mainFunTable = createMainFuncTable();
   int symMaxSize = INITIAL_SYMBOLTABLE_SIZE;
   symbolEntry symTable[INITIAL_SYMBOLTABLE_SIZE];
   int symCount = 0;

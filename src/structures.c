@@ -1,6 +1,3 @@
-//
-// Created by iu22 on 13/06/23.
-//
 #include <string.h>
 #include <malloc.h>
 #include <assert.h>
@@ -344,6 +341,10 @@ void freeList(List list) {
 //  free(strings);
 //
 //}
+
+
+
+
 
 
 
