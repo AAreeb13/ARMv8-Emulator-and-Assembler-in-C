@@ -319,6 +319,7 @@ void freeList(List list) {
   for (int i = 0; i < (list->count); i++) {
     nextNode = node->next;
     freeNode(node);
+    node=nextNode;
   }
   free(list);
 }

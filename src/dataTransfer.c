@@ -4,6 +4,7 @@
 #include "structures.h"
 #include "utils.h"
 
+extern symbolTable mainSymTable;
 
 //Pre args = { "ldr" || "str","Xn || Wn", "[Xm ,..]!" || <literal> || }.
 uint32_t singleDataTransfer(Node instruction) {
@@ -100,7 +101,6 @@ void loadLiteral(uint32_t binary, char **args){
     parseLiteral(args[2],&simm19);
     simm19 = simm19 & 0b1111111111111111111;
   }else{
-    symbolTable mainSymTable;
     simm19 = getAddress(mainSymTable, args[1]);
     //label
   }

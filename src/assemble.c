@@ -17,6 +17,7 @@
 #define STRINGS_COUNT 10
 #define STRINGS_SIZE 20
 
+symbolTable mainSymTable;
 // typeArray[num of elems][length] - Contains all the types
 // Needed for parsing and determining if a word is a label or not
 char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",

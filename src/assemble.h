@@ -11,3 +11,5 @@
 #include "aliases.h"
 #include "branching.h"
 #include "dataTransfer.h"
+
+extern symbolTable mainSymTable;

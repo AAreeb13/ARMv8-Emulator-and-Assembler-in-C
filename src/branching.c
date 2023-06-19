@@ -4,10 +4,11 @@
 #include <stdio.h>
 #include <string.h>
 
+extern symbolTable mainSymTable;
+
 // b label -> branch to address encoded by literal
 uint32_t unconditionalOffsetA(Node node) {
-    // need symbol table to get label address
-    uint32_t labelAddress;
+    uint32_t labelAddress = getAddress(mainSymTable, node->args[0]);
     uint32_t result;
     putBits(&result, 0b101, 26);
     result += ((labelAddress - node->memoryAddress) / 4);

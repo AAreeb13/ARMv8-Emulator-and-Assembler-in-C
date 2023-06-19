@@ -28,6 +28,21 @@ void parseLiteral(char *literal, uint32_t *imm) {
   }
 }
 
+uint32_t parseHex(char hexString[]) {
+  char *endPtr;
+  uint32_t value;
+
+  // Convert the hexadecimal string to a decimal value
+  value = strtol(hexString, &endPtr, 16);
+
+  // Check if conversion was successful
+  if (*endPtr != '\0') {
+    printf("Invalid hexadecimal string\n");
+  }
+
+  return value;
+}
+
 
 
 
