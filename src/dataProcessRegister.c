@@ -52,16 +52,26 @@ static void composeWordMul(uint32_t *result, uint8_t sf, uint16_t section, uint8
 // deals with all arithmetic register and logical cases
 uint32_t arith_or_logic(Node node) {
   uint32_t result = 0;
-  uint8_t sf;
+//  uint8_t sf;
+//  uint8_t opc;
+//  uint8_t type = 0b0101; /*includes M bit*/
+//  uint8_t bit24;
+//  uint8_t shift;
+//  uint8_t N;
+//  uint8_t rm;
+//  uint8_t operand;
+//  uint8_t rn;
+//  uint8_t rd;
+  uint8_t *sf = malloc(sizeof(uint8_t));
   uint8_t opc;
   uint8_t type = 0b0101; /*includes M bit*/
   uint8_t bit24;
-  uint8_t shift;
+  uint8_t *shift = malloc(sizeof(uint8_t));
   uint8_t N;
-  uint8_t rm;
-  uint8_t operand;
-  uint8_t rn;
-  uint8_t rd;
+  uint8_t *rm = malloc(sizeof(uint8_t));
+  uint8_t *operand = malloc(sizeof(uint8_t));
+  uint8_t *rn = malloc(sizeof(uint8_t));
+  uint8_t *rd = malloc(sizeof(uint8_t));
   char *op = node -> type;
   if (!strcmp("add", op) || !strcmp("and", op) || !strcmp("bic", op)) {
     opc = 0b00;
@@ -80,8 +90,9 @@ uint32_t arith_or_logic(Node node) {
     bit24 = !strcmp("subs", op) ? 1 : 0;
     N = strcmp("bics", op) ? 0 : 1;
   }
-  parseArgs(node, &sf, &shift, &rm, &operand, &rn, &rd);
-  composeWord(&result, sf, opc, type, bit24, shift, N, rm, operand, rn, rd);
+  parseArgs(node, sf, shift, rm, operand, rn, rd);
+  composeWord(&result, *sf, opc, type, bit24, *shift, N, *rm, *operand, *rn, *rd);
+  free(sf); free(shift); free(rm); free(operand); free(rn); free(rd);
   return result;
 }
 

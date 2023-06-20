@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "dataProcessRegister.h"
 #include "dataProcessImmediate.h"
+#include "dataProcess.h"
 
 extern uint32_t cmp(Node node);
 extern uint32_t cmn(Node node);

@@ -23,13 +23,13 @@ static void changeType(Node node, char *type) {
 uint32_t cmp(Node node) {
   changeType(node, "subs");
   insertArg(node, "rzr", 0);
-  return arithmeticImm(node);
+  return arithmetic(node);
 }
 
 uint32_t cmn(Node node) {
   changeType(node, "adds");
   insertArg(node, "rzr", 0);
-  return arithmeticImm(node);
+  return arithmetic(node);
 }
 
 uint32_t neg(Node node) {
@@ -63,8 +63,11 @@ uint32_t mov(Node node) {
 }
 
 uint32_t mul(Node node) {
+//  printNode(node);
   changeType(node, strdup("madd"));
+//  printNode(node);
   insertArg(node, strdup("rzr"), 3);
+//  printNode(node);
   return multiply(node);
 }
 
