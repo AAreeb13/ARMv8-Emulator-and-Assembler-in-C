@@ -5,7 +5,7 @@ static void parseArgsArithmetic(Node node, uint8_t *sf, uint8_t *sh, uint16_t *i
   if (node -> num <= 3) {
     *sh = 0;
   } else {
-    uint8_t shift;
+    uint32_t shift;
     parseLiteral(node -> args[4], &shift);
     *sh = shift == 0 ? 0 : 1;
   }
@@ -18,7 +18,7 @@ static void parseArgsWideMove(Node node, uint8_t *sf, uint8_t *hw, uint16_t *imm
   if (node -> num <= 2) {
     *hw = 0;
   } else {
-    uint8_t shift;
+    uint32_t shift;
     parseLiteral(node -> args[3], &shift);
     *hw = shift / 16;
   }
