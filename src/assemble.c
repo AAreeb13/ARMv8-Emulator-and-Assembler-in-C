@@ -20,7 +20,7 @@
 
 // typeArray[num of elems][length] - Contains all the types
 // Needed for parsing and determining if a word is a label or not
-char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
+char typeArray[39][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
                          "neg", "negs", "and", "ands", "bic", "bics",
                          "eor", "orr", "eon", "orn", "tst", "movk",
                          "movn", "movz", "mov", "mvn", "madd", "msub",

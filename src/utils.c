@@ -1,6 +1,6 @@
 #include "utils.h"
 
-extern char typeArray[40][5];
+extern char typeArray[39][5];
 extern nodeFunc funcArray[];
 // puts bits in instruction word in desired location
 // @param endIndex - index of last bit in @param bits
@@ -52,10 +52,7 @@ uint32_t parseHex(char hexString[]) {
 
 // Checks if given string is label by checking against typeArray
 int labelCheck(char *word) {
-  if (word[0] == 'b' && word[1] == '.') {
-    return 0;
-  }
-  for (int i = 0; i < 33; i++) {
+  for (int i = 0; i < 39; i++) {
     if (strcmp(word, typeArray[i]) == 0) {
       return 0;
     }
@@ -91,10 +88,10 @@ void freeMallocedStrings(char **strings, int count) {
 
 //Creates the table with the needed types and pointers
 funcPtrTable createMainFuncTable() {
-  funcPtrEntry table[33];
-  for (int i = 0; i < 33; i++) {
+  funcPtrEntry table[39];
+  for (int i = 0; i < 39; i++) {
     table[i] = createFuncEntry(typeArray[i], funcArray[i]);
   }
-  return (createFuncTable(33,table));
+  return (createFuncTable(39,table));
 }
 
