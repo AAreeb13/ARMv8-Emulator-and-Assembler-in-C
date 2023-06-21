@@ -13,21 +13,27 @@ void giveSymTableBranch(symbolTable table) {
 // b label -> branch to address encoded by literal
 uint32_t unconditionalOffsetA(Node node) {
     uint32_t labelAddress = getAddress(mainSymTable1, node->args[0]);
+    //printf("label address: %X\n", labelAddress);
+    //printf("memory address: %d\n", node->memoryAddress);
+    //printf("offset: %d\n", labelAddress - node->memoryAddress);
     uint32_t result;
+    result = labelAddress - node->memoryAddress;
+    result = result / 4;
     putBits(&result, 0b101, 26);
-    result += ((labelAddress - node->memoryAddress) / 4);
+    //printf("result: %d\n", result);
     return result;
 }
 
 // br xn -> branch to address in Xn (??)
 uint32_t unconditionalRegisterA(Node node) {
     uint32_t result;
-    putBits(&result, 0b1101011, 25);
-    putBits(&result, 0b11111, 16);
-    uint8_t regValue;
+    //putBits(&result, 0b1101011, 25);
+    //putBits(&result, 0b11111, 16);
+    uint32_t regValue;
     uint8_t dummySf;
     parseReg(node->args[0], &dummySf, &regValue);
-    putBits(&result, regValue, 5);
+    printf("reg value = %d", regValue);
+    //putBits(&result, regValue, 5);
     return result;
 }
 
