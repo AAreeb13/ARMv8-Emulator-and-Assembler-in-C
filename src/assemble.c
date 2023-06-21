@@ -24,15 +24,17 @@ char typeArray[33][5] = {"add", "adds", "sub", "subs", "cmp", "cmn",
                          "neg", "negs", "and", "ands", "bic", "bics",
                          "eor", "orr", "eon", "orn", "tst", "movk",
                          "movn", "movz", "mov", "mvn", "madd", "msub",
-                         "mul", "mneg", "b", "b.", "br", "str",
+                         "mul", "mneg", "b", "b.eq", "b.ne", "b.ge",
+                         "b.lt", "b.gt", "b.le", "b.al",  "br", "str",
                          "ldr", "nop", ".int"};
 
 nodeFunc funcArray[] = {arithmetic, arithmetic, arithmetic, arithmetic, cmp, cmn, neg,
                     negs, arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic,
                     arith_or_logic, arith_or_logic, arith_or_logic, arith_or_logic, tst,
                     wideMove, wideMove, wideMove, mov, mvn, multiply, multiply, mul, mneg,
-                    unconditionalOffsetA, conditionalBranchesA, unconditionalRegisterA,
-                    singleDataTransfer, singleDataTransfer, nop, literal};
+                    unconditionalOffsetA, conditionalBranchesA, conditionalBranchesA, conditionalBranchesA,
+                    conditionalBranchesA, conditionalBranchesA, conditionalBranchesA, conditionalBranchesA,
+                    unconditionalRegisterA, singleDataTransfer, singleDataTransfer, nop, literal};
 
 
 
@@ -116,6 +118,7 @@ int main(int argc, char **argv) {
   for (int i = 0; i < list->count; i++) {
     assert (currNode != NULL);
     func = getFuncPtr(currNode->type, mainFunTable);
+    printNode(currNode);
     word = func(currNode);
     size_t numBytesWritten = fwrite(&word, sizeof(uint32_t), 1, writeFile);
     if (numBytesWritten != 1) {

@@ -52,6 +52,9 @@ uint32_t parseHex(char hexString[]) {
 
 // Checks if given string is label by checking against typeArray
 int labelCheck(char *word) {
+  if (word[0] == 'b' && word[1] == '.') {
+    return 0;
+  }
   for (int i = 0; i < 33; i++) {
     if (strcmp(word, typeArray[i]) == 0) {
       return 0;
