@@ -1,6 +1,6 @@
 #include "utils.h"
 
-extern char typeArray[33][5];
+extern char typeArray[40][5];
 extern nodeFunc funcArray[];
 // puts bits in instruction word in desired location
 // @param endIndex - index of last bit in @param bits

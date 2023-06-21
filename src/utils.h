@@ -7,7 +7,7 @@
 #include "structures.h"
 
 
-extern char typeArray[33][5];
+extern char typeArray[40][5];
 extern int labelCheck(char *word);
 extern char **createMallocedStrings(int count, int size);
 extern void freeMallocedStrings(char **strings, int count);
