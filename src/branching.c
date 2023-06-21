@@ -26,13 +26,13 @@ uint32_t unconditionalOffsetA(Node node) {
 
 // br xn -> branch to address in Xn (??)
 uint32_t unconditionalRegisterA(Node node) {
-    uint32_t result;
+    uint32_t result = 0;
     //putBits(&result, 0b1101011, 25);
     //putBits(&result, 0b11111, 16);
-    uint32_t regValue;
-    uint8_t dummySf;
+    uint32_t regValue = 0;
+    uint8_t dummySf = 0;
     parseReg(node->args[0], &dummySf, &regValue);
-    printf("reg value = %d", regValue);
+    printf("reg value = %d \n", regValue);
     //putBits(&result, regValue, 5);
     return result;
 }
