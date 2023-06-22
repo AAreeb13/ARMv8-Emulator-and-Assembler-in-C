@@ -52,16 +52,6 @@ static void composeWordMul(uint32_t *result, uint8_t sf, uint16_t section, uint8
 // deals with all arithmetic register and logical cases
 uint32_t arith_or_logic(Node node) {
   uint32_t result = 0;
-//  uint8_t sf;
-//  uint8_t opc;
-//  uint8_t type = 0b0101; /*includes M bit*/
-//  uint8_t bit24;
-//  uint8_t shift;
-//  uint8_t N;
-//  uint8_t rm;
-//  uint8_t operand;
-//  uint8_t rn;
-//  uint8_t rd;
   uint8_t *sf = malloc(sizeof(uint8_t));
   uint8_t opc;
   uint8_t type = 0b0101; /*includes M bit*/
