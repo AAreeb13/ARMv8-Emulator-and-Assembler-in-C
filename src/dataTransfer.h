@@ -18,7 +18,7 @@ extern uint32_t zeroUnsignedOffset();
 extern uint32_t postIndexed(Node);
 extern uint32_t preIndexed(Node);
 extern uint32_t registerOffset(Node);
-extern void loadLiteral(uint32_t , Node);
+extern void loadLiteral(uint32_t *, Node);
 extern uint32_t literal(Node);
 
 

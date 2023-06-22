@@ -46,7 +46,7 @@ uint32_t singleDataTransfer(Node instruction) {
       putBits(&binary,1,24); //U = 1
     }else if (instruction -> args[2][0] == '#' && instruction -> args[2][strlen(instruction -> args[2])-1] == ']'){ //unsigned offset with address code [xn, #<imm>]
       offset = unsignedImmediateOffset(instruction);
-      putBits(&binary,1,24);
+      putBits(&binary,1,24); //U = 1
     }else if (instruction -> args[2][0] == '#' && instruction -> args[2][strlen(instruction -> args[2])-1] == '!'){
       offset = preIndexed(instruction );
     }else if(instruction -> args[2][0] == '#'&&
@@ -60,7 +60,7 @@ uint32_t singleDataTransfer(Node instruction) {
     }
     putBits(&binary,offset,10);totalBitsAdded+=12; // offset added
   }else{ //Load Literal
-    loadLiteral(binary,instruction);
+    loadLiteral(&binary,instruction);
   }
     return binary;
 }
@@ -89,7 +89,7 @@ uint32_t preIndexed(Node instruction){
 }
 uint32_t postIndexed(Node instruction){
   uint32_t offset = 0 + 0b01; //added bits 11, 10
-  uint32_t simm9;
+  uint32_t simm9 = 0;
   parseLiteral(instruction -> args[2],&simm9);
   simm9 = simm9 & 0b111111111;
   putBits(&offset, simm9, 2);
@@ -107,16 +107,16 @@ uint32_t registerOffset(Node instruction){
   putBits(&offset, 0b100000011010,0);
   return offset;
 }
-void loadLiteral(uint32_t binary, Node instruction){
-  uint32_t  simm19;
+void loadLiteral(uint32_t *binary, Node instruction){
+  uint32_t  simm19 = 0;
   if(instruction -> args[1][0] == '#'){
     parseLiteral(instruction -> args[1],&simm19);
     simm19 = simm19 & 0b1111111111111111111;
   }else{
     simm19 = getAddress(mainSymTable2, instruction -> args[1]);
-    //label
+    simm19 = (simm19 - instruction -> memoryAddress ) >> 2;
   }
-  putBits(&binary,simm19,5);
+  putBits(binary,simm19,5);
 
 }
 
