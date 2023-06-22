@@ -116,6 +116,7 @@ void loadLiteral(uint32_t *binary, Node instruction){
     simm19 = getAddress(mainSymTable2, instruction -> args[1]);
     simm19 = (simm19 - instruction -> memoryAddress ) >> 2;
   }
+  simm19 = simm19 & 0b1111111111111111111;
   putBits(binary,simm19,5);
 
 }
