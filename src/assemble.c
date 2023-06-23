@@ -100,6 +100,7 @@ int main(int argc, char **argv) {
   giveSymTableBranch(mainSymTable);
   giveSymTableTransfer(mainSymTable);
   fclose(readFile);
+  //printList(list);
   // By now our list contains all the nodes, mainSymTable contains all the labels and their memory address
 
 
