@@ -119,7 +119,6 @@ int main(int argc, char **argv) {
   for (int i = 0; i < list->count; i++) {
     assert (currNode != NULL);
     func = getFuncPtr(currNode->type, mainFunTable);
-    printNode(currNode);
     word = func(currNode);
     size_t numBytesWritten = fwrite(&word, sizeof(uint32_t), 1, writeFile);
     if (numBytesWritten != 1) {
