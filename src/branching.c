@@ -46,6 +46,7 @@ uint32_t conditionalBranchesA(Node node) {
     char *mnemonic = node->type;
     uint32_t labelAddress = getAddress(mainSymTable1, node->args[0]);
     uint32_t result = 0;
+    int32_t simm19 = 0;
     uint8_t cond = 0;
 
     if (!strcmp(mnemonic, "b.eq")) {cond = 0b0000;}
@@ -57,9 +58,12 @@ uint32_t conditionalBranchesA(Node node) {
     else if (!strcmp(mnemonic, "b.al")) {cond = 0b1110;}
     printf("cond: %d\n", cond);
 
-    result = (labelAddress - node->memoryAddress) / 4;
-    result = result * 32;
+    simm19 = (labelAddress - node->memoryAddress) / 4;
+    simm19 = simm19 & 0b1111111111111111111;
+
+    putBits(&result, simm19, 5);
     putBits(&result, 0b10101, 26);
+    //result += 0b1010 << 26;
     result += cond;
     //putBits(&result, ((labelAddress - node->memoryAddress) / 4), 5);
     //putBits(&result, cond, 0);
