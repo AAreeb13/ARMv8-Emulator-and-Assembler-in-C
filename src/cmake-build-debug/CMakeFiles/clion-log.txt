@@ -1,4 +1,0 @@
-/usr/lib/clion-2022.2.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/usr/lib/clion-2022.2.3/bin/ninja/linux/ninja -G Ninja -S "/homes/iu22/Arm project/armv8_2/src" -B "/homes/iu22/Arm project/armv8_2/src/cmake-build-debug"
--- Configuring done
--- Generating done
--- Build files have been written to: /homes/iu22/Arm project/armv8_2/src/cmake-build-debug

@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
   // Phase Two: One Pass - Creates all the nodes and the symbol Table containing the labels
   while(fgets(buffer, sizeof(buffer), readFile) != NULL) {
     token = strtok(buffer, DELIMITERS);
-    if (token == NULL || token[0] == ' ' || token[0] == '\n') { // Checks if empty line
+    if (token == NULL || token[0] == ' ' || token[0] == '\n' || token[0] == '\\') { // Checks if empty line
       continue;
     } else if (labelCheck(token)) { // Checks if label, then adds to symTable
       symTable[symCount] = createSymEntry(token, memoryAddress);
