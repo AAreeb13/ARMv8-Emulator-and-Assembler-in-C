@@ -70,7 +70,7 @@ uint32_t zeroUnsignedOffset() {
 }
 uint32_t unsignedImmediateOffset(Node instruction){
   uint8_t isX = instruction -> args[0][0] == 'x';
-  char strImm[5];
+  char strImm[10];
   strncpy(strImm,instruction -> args[2],strlen(instruction -> args[2])-1);
   uint8_t n = (isX) ? 3 : 2;
   uint32_t imm12;parseLiteral(strImm,&imm12);
